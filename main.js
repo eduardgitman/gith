@@ -1,4 +1,4 @@
-import { parseText } from "./modules/parse.js";
+import { parseText, showFileTable, showAuthorsTable } from "./modules/parse.js";
 
 function loadLog() {
   let input = document.querySelector("input");
@@ -14,6 +14,27 @@ function loadLog() {
   fileReader.onerror = function () {
     alert(fileReader.error);
   };
+
+  linkEvents();
+}
+
+function linkEvents() {
+  $('.j-menuAuthors').click(function(){
+    $(this).addClass('active');
+    $('.j-menuFiles').removeClass('active');
+    $('.j-menuFiles').find('.nav-link').attr('href', '#');
+    showAuthorsTable();
+  })
+
+  $('.j-menuFiles').click(function(event){
+    event.preventDefault();
+    event.stopPropagation();
+
+    $(this).addClass('active');
+    $('.j-menuAuthors').removeClass('active');
+
+    showFileTable();
+  })
 }
 
 export { loadLog };

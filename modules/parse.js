@@ -1,4 +1,4 @@
-import { renderCommitsInDialog } from "./uiupdate.js";
+import { renderCommitsInDialog, renderAuthorCommitsInDialog } from "./uiupdate.js";
 
 var g_commits;
 var g_arr;
@@ -17,46 +17,131 @@ function parseText(text) {
   let cArr = parseCommits(commits);
   g_arr = cArr;
 
-  informUser(cArr);
+  showFileTable(cArr);
 }
 
-function informUser(cArr) {
+function showAuthorsTable() {
+  let authorChange = buildAuthorsAmount(g_arr);
+  let cols = [];
+  for (let a of authorChange.aca) {
+    cols.push({ name: a[0], change: a[1], cmts: authorChange.acc.get(a[0]) });
+  }
+
+  if ($.fn.dataTable.isDataTable("#tableFiles")) {
+    $("#tableFiles").DataTable().destroy();
+    $("#tableFiles").hide();
+  }
+
+  if ($.fn.dataTable.isDataTable("#tableAuthors")) {
+    $("#tableAuthors").DataTable().destroy();
+  }
+
+  $("#tableAuthors").DataTable({
+    bAutoWidth: false,
+    order: [[0, "desc"]],
+    pageLength: 25,
+    data: cols,
+    columns: [
+      { data: "change" },
+      { data: "cmts" },
+      {
+        data: "name",
+        render: function (data, type) {
+          let img = $("<img>")
+            .addClass("j-commitViewForAuthor")
+            .attr("src", "/img/commit-git.png");
+          let txt = $("<span>").text(data);
+          return $("<div>").append(img).append(txt).html();
+        },
+      },
+    ],
+  });
+  $("#tableAuthors").show();
+
+  $(".j-commitViewForAuthor").click(function () {
+    authorLog($($(this).siblings()[0]).text());
+  });
+  $(".j-inputForm").hide();
+  $(".j-processPanel").show();
+}
+
+function showFileTable(cArr) {
+  if(cArr == undefined) {
+    cArr = g_arr;
+  }
   showDatepicker(cArr);
 
   let fileChange = buildFileChangeAmount(cArr);
-  // todo - add more statistics on files
-  // commits nr / most frequent comitters / most changes in a day
   let cols = [];
   for (let f of fileChange.fca) {
     cols.push({ name: f[0], change: f[1], cmts: fileChange.fcc.get(f[0]) });
   }
 
-  if ($.fn.dataTable.isDataTable("#table_id")) {
-    $("#table_id").DataTable().destroy();
+  if ($.fn.dataTable.isDataTable("#tableFiles")) {
+    $("#tableFiles").DataTable().destroy();
   }
 
-  $("#table_id").DataTable({
+  if ($.fn.dataTable.isDataTable("#tableAuthors")) {
+    $("#tableAuthors").DataTable().destroy();
+    $("#tableAuthors").hide();
+  }
+
+  $("#tableFiles").DataTable({
     bAutoWidth: false,
-    order: [[0, 'desc']],
-    "pageLength": 50,
+    order: [[0, "desc"]],
+    pageLength: 50,
     data: cols,
     columns: [
-      { data: "change" }, 
-      { data: "cmts" }, 
-      { data: "name", 
+      { data: "change" },
+      { data: "cmts" },
+      {
+        data: "name",
         render: function (data, type) {
-          let img = $('<img>').addClass('j-commitView').attr('src', '/img/commit-git.png');
-          let txt = $('<span>').text(data);
-          return $('<div>').append(img).append(txt).html();
-        }
-      }]
+          let img = $("<img>")
+            .addClass("j-commitView")
+            .attr("src", "/img/commit-git.png");
+          let txt = $("<span>").text(data);
+          return $("<div>").append(img).append(txt).html();
+        },
+      },
+    ],
   });
+  $("#tableFiles").show();
 
-  $('.j-commitView').click(function(){
-   fileLog($($(this).siblings()[0]).text());
-  })
+  $(".j-commitView").click(function () {
+    fileLog($($(this).siblings()[0]).text());
+  });
   $(".j-inputForm").hide();
   $(".j-processPanel").show();
+}
+
+function buildAuthorsAmount(cArr) {
+  const aMap = new Map();
+  const aCC = new Map();
+  // c is an object with: hash, author, authorEmail, date, title, files
+  // files is an array with: changeA, changeR, change, name
+  for (let c of cArr) {
+    // count commits per author
+    if (aCC.has(c.author)) {
+      let old = aCC.get(c.author);
+      aCC.set(c.author, old + 1);
+    } else {
+      aCC.set(c.author, 1);
+    }
+
+    for (let f of c.files) {
+      // count changes
+      if (!isNaN(f.change))
+        if (aMap.has(c.author)) {
+          let old = aMap.get(c.author);
+          aMap.set(c.author, old + f.change);
+        } else {
+          aMap.set(c.author, f.change);
+        }
+    }
+  }
+  // author change amount and author change count
+  return { aca: aMap, acc: aCC };
 }
 
 function buildFileChangeAmount(cArr) {
@@ -90,6 +175,23 @@ function buildFileChangeAmount(cArr) {
   return { fca: array.sort(sortFunction), fcc: fileCC };
 }
 
+function authorLog(author) {
+  console.log("extract author log and show on dialog");
+  let al = [];
+  for (let c of g_arr) {
+    if (c.author == author) {
+      al.push(c);
+      continue;
+    }
+  }
+
+  al.sort(function (a, b) {
+    return b.date - a.date;
+  });
+
+  renderAuthorCommitsInDialog(al, author);
+}
+
 function fileLog(fileName) {
   console.log("extract file log and show on dialog");
   let cl = [];
@@ -106,7 +208,6 @@ function fileLog(fileName) {
     return b.date - a.date;
   });
   renderCommitsInDialog(cl, fileName);
-  
 }
 
 function showDatepicker(cArr) {
@@ -119,7 +220,7 @@ function showDatepicker(cArr) {
     maxDate: new Date(),
     dateFormat: "d M, y",
     onSelect: function (dateText) {
-      informUser(parseCommits(g_commits, new Date(dateText)));
+      showFileTable(parseCommits(g_commits, new Date(dateText)));
     },
   });
   $("#firstEdit").datepicker("setDate", oldestDate);
@@ -204,4 +305,4 @@ function joinCommitWithBody(commits) {
   return holeCommits;
 }
 
-export { parseText, fileLog };
+export { parseText, fileLog, showFileTable, showAuthorsTable };

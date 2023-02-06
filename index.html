@@ -48,6 +48,7 @@
       integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
 
     <title>GIT log Histogram</title>
     <link
@@ -87,8 +88,11 @@
 
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="/">Home</a>
+          <li class="nav-item active j-menuFiles">
+            <a class="nav-link" href="/">Files</a>
+          </li>
+          <li class="nav-item j-menuAuthors">
+            <a class="nav-link" href="#">Authors</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/help.html">Help</a>
@@ -148,17 +152,29 @@
               </div>
             </div>
             
-            <table id="table_id" class="display" style="width:100%">
+            <table id="tableFiles" class="display" style="width:100%">
               <thead>
                   <tr>
-                      <th>paths</th>
                       <th>changes</th>
                       <th>commits</th>
+                      <th>paths</th>
                   </tr>
               </thead>
               <tbody>                  
               </tbody>
           </table>
+
+          <table id="tableAuthors" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>changes</th>
+                    <th>commits</th>
+                    <th>author</th>
+                </tr>
+            </thead>
+            <tbody>                  
+            </tbody>
+        </table>
           </div>
         </div>
       </div>
@@ -171,6 +187,17 @@
           <tr>
               <th>date</th>
               <th>author</th>
+              <th>changes</th>
+              <th>title</th>
+          </tr>
+      </thead>
+      <tbody>                  
+      </tbody>
+      </table>
+      <table id="dialogAuthorTable" class="display" style="width:100%; font-size: 12px;">
+        <thead>
+          <tr>
+              <th>date</th>
               <th>changes</th>
               <th>title</th>
           </tr>
