@@ -29,10 +29,14 @@
 
     <link rel="stylesheet" href="style.css" />
 
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.css">
+  
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.js"></script>
 
     <script
       src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
@@ -54,11 +58,8 @@
 
     <script type="module">
       // import minimal functions
-      import { loadLog, linkEvents } from "./main.js";
+      import { loadLog } from "./main.js";
       window.loadLog = loadLog;
-      // trigger links binding
-      let evt = linkEvents();
-
       // hide the dialog
       $("#dialog").dialog({
         autoOpen: false,
@@ -111,11 +112,7 @@
             ></i>
           </span>
 
-          <div class="flexCenter">
-            <a href="#" class="j-getStartedLink">get started</a>
-          </div>
-
-          <div class="j-inputForm" style="display: none">
+          <div class="j-inputForm">
             <h4>To process the log and view the results please upload it</h4>
             <form id="form" onsubmit="loadLog(); return false;">
               <div class="form-group">
@@ -130,33 +127,11 @@
               </div>
             </form>
             <div class="flexCenter">
-              <a class="j-backToIntro" href="#">back to intro</a>
             </div>
           </div>
 
           <div class="j-processPanel" style="display: none">
             <div class="filterContainer">
-              <div>
-                <span
-                  >Filter by name:
-                  <i
-                    class="bi bi-question-circle"
-                    title="Filter by string case insensitive, use ! prefix to negate search (eg: !DTO - will exclude the paths containing DTO)"
-                  ></i>
-                </span>
-                <input
-                  type="text"
-                  class="j-filterText form-control filterByName"
-                />
-                <input
-                  type="button"
-                  value="filter"
-                  class="j-filterBtn btn btn-primary"
-                />
-                <button type="button" class="j-filterClear btn btn-link">
-                  clear
-                </button>
-              </div>
               <div>
                 <span
                   >List of files since:
@@ -171,34 +146,19 @@
                   type="text"
                 />
               </div>
-              <div>
-                <span
-                  >Sort by:
-                  <i
-                    class="bi bi-question-circle"
-                    title="Sort by number of changes or number of commits"
-                  ></i>
-                </span>
-                <select class="j-sortBySelect">
-                  <option selected value="change">Changes</option>
-                  <option value="commits">Commits</option>
-                </select>
-              </div>
             </div>
-
-            <div style="display: flex">
-              <div style="width: 80px">changes</div>
-              <div style="width: 90px">cmts</div>
-              <div>
-                <i
-                  class="bi bi-question-circle"
-                  title="Click on GIT Node to show file history"
-                ></i>
-                file path
-              </div>
-            </div>
-            <hr />
-            <div id="mostUsedFiles"></div>
+            
+            <table id="table_id" class="display" style="width:100%">
+              <thead>
+                  <tr>
+                      <th>paths</th>
+                      <th>changes</th>
+                      <th>commits</th>
+                  </tr>
+              </thead>
+              <tbody>                  
+              </tbody>
+          </table>
           </div>
         </div>
       </div>
@@ -206,14 +166,17 @@
 
     <!-- file commit history -->
     <div id="dialog" title="file history">
-      <table class="font12">
+      <table id="dialogTable" class="display" style="width:100%; font-size: 12px;">
         <thead>
-          <th>date</th>
-          <th>author</th>
-          <th>changes</th>
-          <th>title</th>
-        </thead>
-        <tbody id="dialogCommitsList"></tbody>
+          <tr>
+              <th>date</th>
+              <th>author</th>
+              <th>changes</th>
+              <th>title</th>
+          </tr>
+      </thead>
+      <tbody>                  
+      </tbody>
       </table>
     </div>
   </body>

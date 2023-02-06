@@ -1,4 +1,4 @@
-import { renderListRow, renderCommitsInDialog } from "./uiupdate.js";
+import { renderCommitsInDialog } from "./uiupdate.js";
 
 var g_commits;
 var g_arr;
@@ -26,13 +26,35 @@ function informUser(cArr) {
   let fileChange = buildFileChangeAmount(cArr);
   // todo - add more statistics on files
   // commits nr / most frequent comitters / most changes in a day
-
-  let ol = $("#mostUsedFiles");
-  ol.empty();
+  let cols = [];
   for (let f of fileChange.fca) {
-    renderListRow(ol, f[0], f[1], fileChange.fcc.get(f[0]));
+    cols.push({ name: f[0], change: f[1], cmts: fileChange.fcc.get(f[0]) });
   }
 
+  if ($.fn.dataTable.isDataTable("#table_id")) {
+    $("#table_id").DataTable().destroy();
+  }
+
+  $("#table_id").DataTable({
+    bAutoWidth: false,
+    order: [[0, 'desc']],
+    "pageLength": 50,
+    data: cols,
+    columns: [
+      { data: "change" }, 
+      { data: "cmts" }, 
+      { data: "name", 
+        render: function (data, type) {
+          let img = $('<img>').addClass('j-commitView').attr('src', '/img/commit-git.png');
+          let txt = $('<span>').text(data);
+          return $('<div>').append(img).append(txt).html();
+        }
+      }]
+  });
+
+  $('.j-commitView').click(function(){
+   fileLog($($(this).siblings()[0]).text());
+  })
   $(".j-inputForm").hide();
   $(".j-processPanel").show();
 }
@@ -80,10 +102,11 @@ function fileLog(fileName) {
     }
   }
 
-  cl.sort(function(a, b) {
+  cl.sort(function (a, b) {
     return b.date - a.date;
   });
   renderCommitsInDialog(cl, fileName);
+  
 }
 
 function showDatepicker(cArr) {
