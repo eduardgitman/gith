@@ -1,0 +1,63 @@
+.wrapper {
+  margin-top: 70px;
+}
+
+.flexCenter {
+  display: flex;
+  justify-content: center;
+}
+
+.firstEdit {
+  display: inline-block;
+  width: auto;
+}
+
+.filterByName {
+  display: inline-block;
+  width: auto;
+}
+
+.filterContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.fileAmountDiv {
+  width: 60px;
+  display: inline-block;
+  text-align: right;
+}
+
+.fileNameDiv {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.fileCommitDiv {
+  display: inline-block;
+  width: 60px;
+  text-align: center;
+}
+
+.mr10 {
+  margin-right: 10px;
+}
+
+.borderChanges {
+  padding-right: 10px;
+  text-align: right;
+}
+
+.fileAuthorDiv {
+    width: 150px;
+}
+
+.tdDate {
+  width: 100px;
+}
+
+.font12 {
+  font-size: 12px;
+}

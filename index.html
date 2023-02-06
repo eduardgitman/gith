@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <link rel="icon" type="image/png" href="./img/favicon.png" />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+    />
+
+    <link
+      rel="stylesheet"
+      href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+
+    <title>GIT log Histogram</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.css"
+    />
+
+    <script type="module">
+      // import minimal functions
+      import { loadLog, linkEvents } from "./main.js";
+      window.loadLog = loadLog;
+      // trigger links binding
+      let evt = linkEvents();
+
+      // hide the dialog
+      $("#dialog").dialog({
+        autoOpen: false,
+        height: "auto",
+        width: 1200,
+        height: 700,
+        modal: true,
+      });
+    </script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="/">Git LOG</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarsExampleDefault"
+        aria-controls="navbarsExampleDefault"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/help.html">Help</a>
+          </li>
+          <!-- <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+          </li> -->
+        </ul>
+      </div>
+    </nav>
+
+    <main class="container" role="main">
+      <div class="wrapper">
+        <div style="margin: 0 auto">
+          <h2>Git histogram</h2>
+          <span
+            >pro tip: on first use read the helpers
+            <i
+              class="bi bi-question-circle"
+              title="I will explain the functionality "
+            ></i>
+          </span>
+
+          <div class="flexCenter">
+            <a href="#" class="j-getStartedLink">get started</a>
+          </div>
+
+          <div class="j-inputForm" style="display: none">
+            <h4>To process the log and view the results please upload it</h4>
+            <form id="form" onsubmit="loadLog(); return false;">
+              <div class="form-group">
+                <input type="file" id="files" class="form-control-file" />
+                <br />
+                <i
+                  class="bi bi-question-circle"
+                  title="On click, the process will automatically begin and is instant, if nothing happens please check console for errors"
+                ></i>
+                <input type="submit" value="Upload" class="btn btn-primary" />
+                <input type="reset" value="Clear" class="btn btn-secondary" />
+              </div>
+            </form>
+            <div class="flexCenter">
+              <a class="j-backToIntro" href="#">back to intro</a>
+            </div>
+          </div>
+
+          <div class="j-processPanel" style="display: none">
+            <div class="filterContainer">
+              <div>
+                <span
+                  >Filter by name:
+                  <i
+                    class="bi bi-question-circle"
+                    title="Filter by string case insensitive, use ! prefix to negate search (eg: !DTO - will exclude the paths containing DTO)"
+                  ></i>
+                </span>
+                <input
+                  type="text"
+                  class="j-filterText form-control filterByName"
+                />
+                <input
+                  type="button"
+                  value="filter"
+                  class="j-filterBtn btn btn-primary"
+                />
+                <button type="button" class="j-filterClear btn btn-link">
+                  clear
+                </button>
+              </div>
+              <div>
+                <span
+                  >List of files since:
+                  <i
+                    class="bi bi-question-circle"
+                    title="On date change the list is updates with commits since selected date"
+                  ></i>
+                </span>
+                <input
+                  id="firstEdit"
+                  class="form-control firstEdit"
+                  type="text"
+                />
+              </div>
+              <div>
+                <span
+                  >Sort by:
+                  <i
+                    class="bi bi-question-circle"
+                    title="Sort by number of changes or number of commits"
+                  ></i>
+                </span>
+                <select class="j-sortBySelect">
+                  <option selected value="change">Changes</option>
+                  <option value="commits">Commits</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: flex">
+              <div style="width: 80px">changes</div>
+              <div style="width: 90px">cmts</div>
+              <div>
+                <i
+                  class="bi bi-question-circle"
+                  title="Click on GIT Node to show file history"
+                ></i>
+                file path
+              </div>
+            </div>
+            <hr />
+            <div id="mostUsedFiles"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- file commit history -->
+    <div id="dialog" title="file history">
+      <table class="font12">
+        <thead>
+          <th>date</th>
+          <th>author</th>
+          <th>changes</th>
+          <th>title</th>
+        </thead>
+        <tbody id="dialogCommitsList"></tbody>
+      </table>
+    </div>
+  </body>
+</html>
