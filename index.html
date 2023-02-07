@@ -72,7 +72,15 @@
         width: 1200,
         height: 700,
         modal: true,
-      });      
+      });     
+      
+      $("#dialogCommit").dialog({
+        autoOpen: false,
+        height: "auto",
+        width: 1000,
+        height: 500,
+        modal: true,
+      }); 
     </script>
   </head>
   <body>
@@ -195,6 +203,7 @@
         <thead>
           <tr>
               <th>date</th>
+              <th>hash</th>
               <th>author</th>
               <th>changes</th>
               <th>title</th>
@@ -207,6 +216,7 @@
         <thead>
           <tr>
               <th>date</th>
+              <th>hash</th>
               <th>changes</th>
               <th>title</th>
           </tr>
@@ -214,6 +224,10 @@
       <tbody>                  
       </tbody>
       </table>
+    </div>
+
+    <div id="dialogCommit" title="file history">
+      <div class="j-commitBody"></div>
     </div>
   </body>
 </html>

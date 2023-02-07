@@ -83,8 +83,8 @@ function showAuthorsTable() {
         data: "name",
         render: function (data, type) {
           let img = $("<img>")
-            .addClass("j-commitViewForAuthor")
-            .attr("src", "/img/commit-git.png");
+            .addClass("j-commitViewForAuthor mr10")
+            .attr("src", "/img/author.png");
           let txt = $("<span>").text(data);
           return $("<div>").append(img).append(txt).html();
         },
@@ -132,7 +132,7 @@ function showFileTable(cArr) {
         render: function (data, type) {
           let img = $("<img>")
             .addClass("j-commitView")
-            .attr("src", "/img/commit-git.png");
+            .attr("src", "/img/file.png");
           let txt = $("<span>").text(data);
           return $("<div>").append(img).append(txt).html();
         },
@@ -402,4 +402,12 @@ function joinCommitWithBody(commits) {
   return holeCommits;
 }
 
-export { parseText, fileLog, showFileTable, showAuthorsTable, showFolderTree };
+function getCommit(hash) {
+  for (let c of g_arr) {
+    if (c.hash.startsWith(hash)) {
+      return c;
+    }
+  }
+}
+
+export { parseText, fileLog, showFileTable, showAuthorsTable, showFolderTree, getCommit};

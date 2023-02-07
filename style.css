@@ -64,11 +64,16 @@
 
 .commitChangesAddedInDialog {
   color: green;
-  width: 30px;
+  width: 40px;
   display: inline-block;
 }
 
 .commitChangesRemovedInDialog {
   color: red;
   margin-left: 8px;
+}
+
+.wideCommitChangesRemovedInDialog {
+  width: 40px;
+  display: inline-block;
 }
