@@ -51,7 +51,7 @@
 }
 
 .fileAuthorDiv {
-    width: 150px;
+  width: 150px;
 }
 
 .tdDate {
@@ -60,4 +60,15 @@
 
 .font12 {
   font-size: 12px;
+}
+
+.commitChangesAddedInDialog {
+  color: green;
+  width: 30px;
+  display: inline-block;
+}
+
+.commitChangesRemovedInDialog {
+  color: red;
+  margin-left: 8px;
 }

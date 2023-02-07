@@ -1,26 +1,10 @@
-
-
 function renderCommitsInDialog(commits, fileName) {
   $("#dialog").dialog("option", "title", "Log for " + fileName);
 
-  // c is object with: hash, author, authorEmail, date, title, files
-  // c.files is array of objects with: changeA, changeR, change, name
-  for (let c of commits) {
-    let changeNo = 0;
-    for (let f of c.files) {
-      if (fileName == f.name) {
-        changeNo = f.change;
-        break;
-      }
-    }
-
-    c.changes = changeNo;
-  }
-
   switchUiContext([
-    { type: 'table', hook: '#dialogAuthorTable'},
-    { type: 'table', hook: '#dialogTable'}
-  ])
+    { type: "table", hook: "#dialogAuthorTable" },
+    { type: "table", hook: "#dialogTable" },
+  ]);
 
   $("#dialogTable").DataTable({
     bAutoWidth: false,
@@ -31,13 +15,26 @@ function renderCommitsInDialog(commits, fileName) {
       {
         data: "date",
         type: "date",
-        width: "15%",
+        width: "10%",
         render: function (data, type) {
           return $.datepicker.formatDate("dd M yy", new Date(data));
         },
       },
       { data: "author" },
-      { data: "changes" },
+      {
+        data: "changes",
+        render: function (data, type, row) {
+          let file;
+          for (let f of row.files) {
+            if (fileName == f.name) {
+              file = f;
+              break;
+            }
+          }
+
+          return renderChangesColumn(file.changeA, file.changeR);
+        },
+      },
       { data: "title" },
     ],
   });
@@ -45,26 +42,17 @@ function renderCommitsInDialog(commits, fileName) {
   $("#dialog").dialog("open");
 }
 
+  // c is object with: hash, author, authorEmail, date, title, files
+  // c.files is array of objects with: changeA, changeR, change, name
+
+
 function renderAuthorCommitsInDialog(commits, author) {
   $("#dialog").dialog("option", "title", "Commits by " + author);
 
-  // c is object with: hash, author, authorEmail, date, title, files
-  // c.files is array of objects with: changeA, changeR, change, name
-  for (let c of commits) {
-    let changeNo = 0;
-    if (author == c.author) {
-      for (let f of c.files) {
-        if (!isNaN(f.change)) changeNo += f.change;
-      }
-    }
-
-    c.changes = changeNo;
-  }
-
   switchUiContext([
-    { type: 'table', hook: '#dialogAuthorTable'},
-    { type: 'table', hook: '#dialogTable'}
-  ])
+    { type: "table", hook: "#dialogAuthorTable" },
+    { type: "table", hook: "#dialogTable" },
+  ]);
 
   $("#dialogAuthorTable").DataTable({
     bAutoWidth: false,
@@ -75,12 +63,24 @@ function renderAuthorCommitsInDialog(commits, author) {
       {
         data: "date",
         type: "date",
-        width: "15%",
+        width: "10%",
         render: function (data, type) {
           return $.datepicker.formatDate("dd M yy", new Date(data));
         },
       },
-      { data: "changes" },
+      {
+        data: "changes",
+        render: function (data, type, row) {
+          let caNo = 0;
+          let crNo = 0;
+          for (let f of row.files) {
+            if (!isNaN(f.changeA)) caNo += f.changeA;
+            if (!isNaN(f.changeR)) crNo += f.changeR;
+          }
+
+          return renderChangesColumn(caNo, crNo);
+        },
+      },
       { data: "title" },
     ],
   });
@@ -88,16 +88,23 @@ function renderAuthorCommitsInDialog(commits, author) {
   $("#dialog").dialog("open");
 }
 
+function renderChangesColumn(caNo, crNo) {
+  let ca = $("<span>").addClass("commitChangesAddedInDialog").text(caNo);
+  let cr = $("<span>").addClass("commitChangesRemovedInDialog").text(crNo);
+
+  return $("<span>").append(ca).append(cr).html();
+}
+
 function switchUiContext(elements) {
   for (let e of elements) {
-    if (e.type == 'table') {
+    if (e.type == "table") {
       if ($.fn.dataTable.isDataTable(e.hook)) {
         $(e.hook).DataTable().destroy();
       }
       $(e.hook).hide();
     }
 
-    if(e.type == 'tree') {
+    if (e.type == "tree") {
       // figure out how to destroy
       $(e.hook).hide();
     }
