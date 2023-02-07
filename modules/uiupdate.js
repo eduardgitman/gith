@@ -41,7 +41,7 @@ function renderCommitsInDialog(commits, fileName) {
       { data: "title" },
     ],
   });
-
+  $("#dialogTable").show();
   $("#dialog").dialog("open");
 }
 
@@ -84,7 +84,7 @@ function renderAuthorCommitsInDialog(commits, author) {
       { data: "title" },
     ],
   });
-
+  $("#dialogAuthorTable").show();
   $("#dialog").dialog("open");
 }
 
