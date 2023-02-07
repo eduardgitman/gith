@@ -41,6 +41,11 @@ function showFolderTree() {
 
       data.$title.html("").append(span).append(title);
     },
+    click : function(event, data) {
+      let path = computeTreeNodePath(data.node).substring("/root/".length);
+      if(!data.node.folder)
+        fileLog(path);
+    },
     beforeExpand: function (event, data) {
       for (let c of data.node.children) {
         // put the commits here
@@ -197,7 +202,6 @@ function countCommitsForPath(path) {
 }
 
 function computeTreeNodePath(node) {
-  console.log(node);
   if (node == null) return "";
 
   let name = node.title;

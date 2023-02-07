@@ -1,4 +1,4 @@
-import { fileLog } from "./parse.js";
+
 
 function renderCommitsInDialog(commits, fileName) {
   $("#dialog").dialog("option", "title", "Log for " + fileName);
