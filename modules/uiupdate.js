@@ -17,9 +17,10 @@ function renderCommitsInDialog(commits, fileName) {
     c.changes = changeNo;
   }
 
-  if ($.fn.dataTable.isDataTable("#dialogTable")) {
-    $("#dialogTable").DataTable().destroy();
-  }
+  switchUiContext([
+    { type: 'table', hook: '#dialogAuthorTable'},
+    { type: 'table', hook: '#dialogTable'}
+  ])
 
   $("#dialogTable").DataTable({
     bAutoWidth: false,
@@ -29,7 +30,7 @@ function renderCommitsInDialog(commits, fileName) {
     columns: [
       {
         data: "date",
-        "type":"date",
+        type: "date",
         width: "15%",
         render: function (data, type) {
           return $.datepicker.formatDate("dd M yy", new Date(data));
@@ -52,22 +53,18 @@ function renderAuthorCommitsInDialog(commits, author) {
   for (let c of commits) {
     let changeNo = 0;
     if (author == c.author) {
-      for (let f of c.files) {      
-        if(!isNaN(f.change))
-          changeNo += f.change;
+      for (let f of c.files) {
+        if (!isNaN(f.change)) changeNo += f.change;
       }
     }
 
     c.changes = changeNo;
   }
 
-  if ($.fn.dataTable.isDataTable("#dialogAuthorTable")) {
-    $("#dialogAuthorTable").DataTable().destroy();
-  }
-  if ($.fn.dataTable.isDataTable("#dialogTable")) {
-    $("#dialogTable").DataTable().destroy();
-    $("#dialogTable").hide();
-  }
+  switchUiContext([
+    { type: 'table', hook: '#dialogAuthorTable'},
+    { type: 'table', hook: '#dialogTable'}
+  ])
 
   $("#dialogAuthorTable").DataTable({
     bAutoWidth: false,
@@ -77,7 +74,7 @@ function renderAuthorCommitsInDialog(commits, author) {
     columns: [
       {
         data: "date",
-        "type":"date",
+        type: "date",
         width: "15%",
         render: function (data, type) {
           return $.datepicker.formatDate("dd M yy", new Date(data));
@@ -91,4 +88,20 @@ function renderAuthorCommitsInDialog(commits, author) {
   $("#dialog").dialog("open");
 }
 
-export { renderCommitsInDialog, renderAuthorCommitsInDialog };
+function switchUiContext(elements) {
+  for (let e of elements) {
+    if (e.type == 'table') {
+      if ($.fn.dataTable.isDataTable(e.hook)) {
+        $(e.hook).DataTable().destroy();
+      }
+      $(e.hook).hide();
+    }
+
+    if(e.type == 'tree') {
+      // figure out how to destroy
+      $(e.hook).hide();
+    }
+  }
+}
+
+export { renderCommitsInDialog, renderAuthorCommitsInDialog, switchUiContext };

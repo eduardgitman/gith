@@ -27,6 +27,8 @@
       href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css"
     />
 
+    <link href="//cdn.jsdelivr.net/npm/jquery.fancytree@2.27/dist/skin-win8/ui.fancytree.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="style.css" />
 
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.css">
@@ -37,6 +39,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.js"></script>
+    
+    <script src="//cdn.jsdelivr.net/npm/jquery.fancytree@2.27/dist/jquery.fancytree-all-deps.min.js"></script>
 
     <script
       src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
@@ -68,7 +72,7 @@
         width: 1200,
         height: 700,
         modal: true,
-      });
+      });      
     </script>
   </head>
   <body>
@@ -93,6 +97,9 @@
           </li>
           <li class="nav-item j-menuAuthors">
             <a class="nav-link" href="#">Authors</a>
+          </li>
+          <li class="nav-item j-menuFolders">
+            <a class="nav-link" href="#">Folders</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/help.html">Help</a>
@@ -152,6 +159,8 @@
               </div>
             </div>
             
+            <div id="tree"></div>
+
             <table id="tableFiles" class="display" style="width:100%">
               <thead>
                   <tr>

@@ -1,4 +1,4 @@
-import { parseText, showFileTable, showAuthorsTable } from "./modules/parse.js";
+import { parseText, showFileTable, showAuthorsTable, showFolderTree } from "./modules/parse.js";
 
 function loadLog() {
   let input = document.querySelector("input");
@@ -15,25 +15,33 @@ function loadLog() {
     alert(fileReader.error);
   };
 
-  linkEvents();
+  linkMenuEvents();
 }
 
-function linkEvents() {
+function linkMenuEvents() {
   $('.j-menuAuthors').click(function(){
+    resetMenuActiveState();
     $(this).addClass('active');
-    $('.j-menuFiles').removeClass('active');
     $('.j-menuFiles').find('.nav-link').attr('href', '#');
     showAuthorsTable();
   })
 
   $('.j-menuFiles').click(function(event){
-    event.preventDefault();
-    event.stopPropagation();
-
+    resetMenuActiveState();
     $(this).addClass('active');
-    $('.j-menuAuthors').removeClass('active');
-
     showFileTable();
+  })
+
+  $('.j-menuFolders').click(function(event){
+    resetMenuActiveState();
+    $(this).addClass('active');
+    showFolderTree();
+  })  
+}
+
+function resetMenuActiveState() {
+  $('.navbar-nav').find('.nav-item').each(function() {
+    $( this ).removeClass( "active" );
   })
 }
 

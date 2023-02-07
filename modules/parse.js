@@ -1,4 +1,8 @@
-import { renderCommitsInDialog, renderAuthorCommitsInDialog } from "./uiupdate.js";
+import {
+  renderCommitsInDialog,
+  renderAuthorCommitsInDialog,
+  switchUiContext,
+} from "./uiupdate.js";
 
 var g_commits;
 var g_arr;
@@ -20,6 +24,35 @@ function parseText(text) {
   showFileTable(cArr);
 }
 
+function showFolderTree() {
+  switchUiContext([
+    { type: "table", hook: "#tableFiles" },
+    { type: "table", hook: "#tableAuthors" },
+    { type: "tree", hook: "#tree" },
+  ]);
+
+  $("#tree").fancytree({
+    source: buildTreeView(g_arr),
+    enhanceTitle: function (event, data) {
+      let span = $("<span>")
+        .attr("style", "display: inline-block; width: 30px")
+        .text(data.node.data.change);
+      let title = $("<span>").text(data.node.title);
+
+      data.$title.html("").append(span).append(title);
+    },
+    beforeExpand: function (event, data) {
+      for (let c of data.node.children) {
+        // put the commits here
+        let path = computeTreeNodePath(c).substring("/root/".length);
+        c.data.change = countCommitsForPath(path);
+        if (c.children != null && c.children.length > 0) c.folder = true;
+      }
+    },
+  });
+  $("#tree").show();
+}
+
 function showAuthorsTable() {
   let authorChange = buildAuthorsAmount(g_arr);
   let cols = [];
@@ -27,14 +60,11 @@ function showAuthorsTable() {
     cols.push({ name: a[0], change: a[1], cmts: authorChange.acc.get(a[0]) });
   }
 
-  if ($.fn.dataTable.isDataTable("#tableFiles")) {
-    $("#tableFiles").DataTable().destroy();
-    $("#tableFiles").hide();
-  }
-
-  if ($.fn.dataTable.isDataTable("#tableAuthors")) {
-    $("#tableAuthors").DataTable().destroy();
-  }
+  switchUiContext([
+    { type: "table", hook: "#tableFiles" },
+    { type: "table", hook: "#tableAuthors" },
+    { type: "tree", hook: "#tree" },
+  ]);
 
   $("#tableAuthors").DataTable({
     bAutoWidth: false,
@@ -66,8 +96,9 @@ function showAuthorsTable() {
 }
 
 function showFileTable(cArr) {
-  if(cArr == undefined) {
+  if (cArr == undefined) {
     cArr = g_arr;
+    showFolderTree;
   }
   showDatepicker(cArr);
 
@@ -77,14 +108,11 @@ function showFileTable(cArr) {
     cols.push({ name: f[0], change: f[1], cmts: fileChange.fcc.get(f[0]) });
   }
 
-  if ($.fn.dataTable.isDataTable("#tableFiles")) {
-    $("#tableFiles").DataTable().destroy();
-  }
-
-  if ($.fn.dataTable.isDataTable("#tableAuthors")) {
-    $("#tableAuthors").DataTable().destroy();
-    $("#tableAuthors").hide();
-  }
+  switchUiContext([
+    { type: "table", hook: "#tableFiles" },
+    { type: "table", hook: "#tableAuthors" },
+    { type: "tree", hook: "#tree" },
+  ]);
 
   $("#tableFiles").DataTable({
     bAutoWidth: false,
@@ -113,6 +141,71 @@ function showFileTable(cArr) {
   });
   $(".j-inputForm").hide();
   $(".j-processPanel").show();
+}
+
+function buildTreeView(cArr) {
+  // c is an object with: hash, author, authorEmail, date, title, files
+  // files is an array with: changeA, changeR, change, name
+  let paths = [];
+  for (let c of cArr) {
+    for (let f of c.files) {
+      if (paths.indexOf(f.name) == -1) {
+        paths.push(f.name);
+      }
+    }
+  }
+
+  let result = [];
+  let level = { result };
+
+  paths.forEach((path) => {
+    path.split("/").reduce((r, title, i, a) => {
+      if (!r[title]) {
+        r[title] = { result: [] };
+        r.result.push({ title, children: r[title].result });
+      }
+
+      return r[title];
+    }, level);
+  });
+
+  // compute commits for the first level
+  for (let r of result) {
+    if (r.children.length > 0) {
+      r.folder = true;
+    }
+  }
+
+  for (let r of result) {
+    r.change = countCommitsForPath(r.title);
+  }
+
+  return result;
+}
+
+function countCommitsForPath(path) {
+  let result = 0;
+  for (let c of g_arr) {
+    for (let f of c.files) {
+      if (f.name.startsWith(path)) {
+        result++;
+        break;
+      }
+    }
+  }
+  return result;
+}
+
+function computeTreeNodePath(node) {
+  console.log(node);
+  if (node == null) return "";
+
+  let name = node.title;
+  if (node.parent != "root") {
+    return computeTreeNodePath(node.parent) + "/" + name;
+  } else {
+    return "";
+  }
 }
 
 function buildAuthorsAmount(cArr) {
@@ -305,4 +398,4 @@ function joinCommitWithBody(commits) {
   return holeCommits;
 }
 
-export { parseText, fileLog, showFileTable, showAuthorsTable };
+export { parseText, fileLog, showFileTable, showAuthorsTable, showFolderTree };
