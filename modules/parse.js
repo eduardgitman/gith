@@ -32,6 +32,11 @@ function showFolderTree() {
   ]);
 
   $("#tree").fancytree({
+    extensions: ["filter"],
+    filter: {  // override default settings
+      counter: false, // No counter badges
+      mode: "hide"  // "dimm": Grayout unmatched nodes, "hide": remove unmatched nodes
+    },
     source: buildTreeView(g_arr),
     enhanceTitle: function (event, data) {
       let span = $("<span>")
@@ -56,6 +61,11 @@ function showFolderTree() {
     },
   });
   $("#tree").show();
+
+  $('#treeSearchInput').keyup(function (e) { 
+
+    $.ui.fancytree.getTree("#tree").filterNodes($(this).val(), {autoExpand: true, leavesOnly: true});
+  });
 }
 
 function showAuthorsTable() {
