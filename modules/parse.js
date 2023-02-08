@@ -84,7 +84,7 @@ function showAuthorsTable() {
         render: function (data, type) {
           let img = $("<img>")
             .addClass("j-commitViewForAuthor mr10")
-            .attr("src", "/img/author.png");
+            .attr("src", "https://img.icons8.com/material-outlined/32/null/document-writer.png");
           let txt = $("<span>").text(data);
           return $("<div>").append(img).append(txt).html();
         },
@@ -132,7 +132,7 @@ function showFileTable(cArr) {
         render: function (data, type) {
           let img = $("<img>")
             .addClass("j-commitView")
-            .attr("src", "/img/file.png");
+            .attr("src", "https://img.icons8.com/ios/32/null/file--v1.png");
           let txt = $("<span>").text(data);
           return $("<div>").append(img).append(txt).html();
         },
