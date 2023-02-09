@@ -1,7 +1,16 @@
-import { buildFileChangeAmount, buildAuthorsAmount, buildTreeView, countCommitsForPath, computeTreeNodePath, authorLog } from "./parse.js";
+import {
+  buildFileChangeAmount,
+  buildAuthorsAmount,
+  buildTreeView,
+  countCommitsForPath,
+  computeTreeNodePath,
+  authorLog,
+  fileLog,
+} from "./parse.js";
+
 import { cleanAndCloseUiContext } from "./uiupdate.js";
 
-function showFileTable() {  
+function showFileTable() {
   let fileChange = buildFileChangeAmount();
   let cols = [];
   for (let f of fileChange.fca) {
@@ -114,7 +123,7 @@ function showFolderTree() {
     },
     click: function (event, data) {
       let path = computeTreeNodePath(data.node).substring("/root/".length);
-      if (!data.node.folder) fileLog(path);
+      fileLog(path);
     },
     beforeExpand: function (event, data) {
       for (let c of data.node.children) {
@@ -129,11 +138,12 @@ function showFolderTree() {
   $("#tree").show();
 
   $("#treeSearchInput").keyup(function (e) {
-    $.ui.fancytree
-      .getTree("#tree")
-      .filterNodes($(this).val(), { autoExpand: true, leavesOnly: true });
+    if (e.key === "Enter" || e.keyCode === 13) {
+      $.ui.fancytree
+        .getTree("#tree")
+        .filterNodes($(this).val(), { autoExpand: true, leavesOnly: true });
+    }
   });
 }
 
-
-export {showFileTable, showAuthorsTable, showFolderTree};
+export { showFileTable, showAuthorsTable, showFolderTree };
