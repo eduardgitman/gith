@@ -63,8 +63,8 @@
 
     <script type="module">
       // import minimal functions
-      import { loadLog } from "./index.js";
-      window.loadLog = loadLog;
+      import { initApplication } from "./index.js";
+      window.init = initApplication;
       // hide the dialog
       $("#dialog").dialog({
         autoOpen: false,
@@ -112,8 +112,8 @@
           <li class="nav-item j-menuFolders">
             <a class="nav-link" href="#">Folders</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/help.html">Help</a>
+          <li class="nav-item j-menuHelp">
+            <a class="nav-link" href="#">Help</a>
           </li>
           <!-- <li class="nav-item">
             <a class="nav-link" href="#">About</a>
@@ -132,7 +132,7 @@
                 <a href="https://www.git-scm.com/docs/git-log" target="_blank">git log </a> for details.</h6>
 
             <div class="j-inputForm" style="margin-top: 40px;">
-              <form id="form" onsubmit="loadLog(); return false;">
+              <form id="form" onsubmit="init(); return false;">
                 <div class="mb-3">
                   <label for="files" class="form-label">pick up you git log:</label>
                   <input class="form-control" type="file" id="files">
@@ -148,28 +148,6 @@
           </div>
 
           <div class="j-processPanel" style="display: none">
-            <!-- <div class="filterContainer">
-              <div>
-                <span
-                  >List of files since:
-                  <i
-                    class="bi bi-question-circle"
-                    title="On date change the list is updates with commits since selected date"
-                  ></i>
-                </span>
-                <input
-                  id="firstEdit"
-                  class="form-control firstEdit"
-                  type="text"
-                />
-              </div>
-            </div> -->
-            
-            <!-- <div > tree search: <input id="treeSearchInput" type="text"> </div> -->
-            <div class="j-treePanel">
-              <div id="tree"></div>
-            </div>
-            
             <div class="j-filesPanel">
               <table id="tableFiles" class="display" style="width:100%; font-size: 12px;">
                 <thead>
@@ -196,7 +174,16 @@
                 <tbody>                  
                 </tbody>
               </table>
-            </div>            
+            </div>  
+
+            <div class="j-treePanel">
+              <!-- <div > tree search: <input id="treeSearchInput" type="text"> </div> -->
+              <div id="tree"></div>
+            </div>
+            
+            <div class="j-helpPanel">
+                This will come latter :) 
+            </div>
           </div>
         </div>
       </div>
@@ -231,7 +218,7 @@
       </table>
     </div>
 
-    <div id="dialogCommit" title="file history">
+    <div id="dialogCommit" title="file history" style="font-size: 12px;">
       <div class="j-commitBody"></div>
     </div>
 

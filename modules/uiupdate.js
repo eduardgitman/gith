@@ -121,7 +121,9 @@ function showCommit(hash) {
   let files = $('<div>');
   for(let f of c.files) {
 
-    let fileFiv = $('<div>').append(renderChangesColumn(f.changeA, f.changeR, true)).append($('<span>').text(f.name));
+    let fileFiv = $('<div>')
+          .append(renderChangesColumn(f.changeA, f.changeR, true))
+          .append($('<span>').addClass('consoleFont').text(f.name));
 
     files.append(fileFiv);
   }

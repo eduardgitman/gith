@@ -1,6 +1,13 @@
 import { parseText, showFileTable, showAuthorsTable, showFolderTree } from "./modules/parse.js";
 
-function loadLog() {
+const menuToPanel = [
+  {menu: '.j-menuFiles', panel: '.j-filesPanel'},
+  {menu: '.j-menuAuthors', panel: '.j-authorsPanel'},
+  {menu: '.j-menuFolders', panel: '.j-treePanel'},
+  {menu: '.j-menuHelp', panel: '.j-helpPanel'}
+]
+
+function initApplication() {
   let input = document.querySelector("input");
   const file = input.files[0];
   console.log("Loading GIT log file: " + file.name);
@@ -11,65 +18,51 @@ function loadLog() {
     console.log("File loaded in memory");
     parseText(fileReader.result);
 
-    $("#tableFiles").show();
-    $(".j-firstPageInfo").hide();  
-    $(".j-inputForm").hide();
-    $(".j-processPanel").show();
+    $('.j-firstPageInfo').hide();
+    $('.j-processPanel').show();
+
+    linkMenuEvents();
+    $('.j-menuFiles').click();
   };
   fileReader.onerror = function () {
     alert(fileReader.error);
-  };
-
-  resetMenuActiveState();
-  $('.j-menuFiles').addClass('active');
-
-  linkMenuEvents();
+  }; 
 }
 
-function linkMenuEvents() {
-  
-  $('.j-menuHome').click(function(){
-    resetMenuActiveState();
-  })
+function linkMenuEvents() {  
 
-  $('.j-menuAuthors').click(function(){
-    resetMenuActiveState();
-    $(this).addClass('active');
-    showAuthorsTable();
-
-    $("#tableAuthors").show();
-    $(".j-firstPageInfo").hide();  
-    $(".j-inputForm").hide();
-    $(".j-processPanel").show();
-  })
-
-  $('.j-menuFiles').click(function(event){
-    resetMenuActiveState();
-    $(this).addClass('active');
+  $('.j-menuFiles').click(function(event){    
     showFileTable();
-
-    $("#tableFiles").show();
-    $(".j-firstPageInfo").hide();  
-    $(".j-inputForm").hide();
-    $(".j-processPanel").show();
+    setMenuActive($(this));
   })
 
-  $('.j-menuFolders').click(function(event){
-    resetMenuActiveState();
-    $(this).addClass('active');
-    showFolderTree();
+  $('.j-menuAuthors').click(function(){    
+    showAuthorsTable();
+    setMenuActive($(this));
+  })
 
-    $("#tableFiles").hide();
-    $(".j-firstPageInfo").hide();  
-    $(".j-inputForm").hide();
-    $("#tree").show();
+  $('.j-menuFolders').click(function(event){    
+    showFolderTree();
+    setMenuActive($(this));
+  })  
+
+  $('.j-menuHelp').click(function(event){   
+    setMenuActive($(this));
   })  
 }
 
-function resetMenuActiveState() {
+function setMenuActive(elm) {
   $('.navbar-nav').find('.nav-item').each(function() {
     $( this ).removeClass( "active" );
   })
+  elm.addClass('active');
+
+  menuToPanel.forEach((obj, index) => {
+    $(obj.panel).hide();
+    if(elm.attr('class').indexOf(obj.menu.substring(1)) > 0 ) {
+      $(obj.panel).show();
+    }
+  })
 }
 
-export { loadLog };
+export { initApplication };

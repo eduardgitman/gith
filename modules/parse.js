@@ -21,88 +21,6 @@ function parseText(text) {
   let cArr = parseCommits(commits);
   g_arr = cArr;
 
-  showFileTable(cArr);
-}
-
-function showFolderTree() {
-  cleanAndCloseUiContext([
-    { type: "table", hook: "#tableFiles" },
-    { type: "table", hook: "#tableAuthors" },
-    { type: "tree", hook: "#tree" },
-  ]);
-
-  $("#tree").fancytree({
-    extensions: ["filter"],
-    filter: {  // override default settings
-      counter: false, // No counter badges
-      mode: "hide"  // "dimm": Grayout unmatched nodes, "hide": remove unmatched nodes
-    },
-    source: buildTreeView(g_arr),
-    enhanceTitle: function (event, data) {
-      let span = $("<span>")
-        .attr("style", "display: inline-block; width: 30px")
-        .text(data.node.data.change);
-      let title = $("<span>").text(data.node.title);
-
-      data.$title.html("").append(span).append(title);
-    },
-    click : function(event, data) {
-      let path = computeTreeNodePath(data.node).substring("/root/".length);
-      if(!data.node.folder)
-        fileLog(path);
-    },
-    beforeExpand: function (event, data) {
-      for (let c of data.node.children) {
-        // put the commits here
-        let path = computeTreeNodePath(c).substring("/root/".length);
-        c.data.change = countCommitsForPath(path);
-        if (c.children != null && c.children.length > 0) c.folder = true;
-      }
-    },
-  });
-
-  $('#treeSearchInput').keyup(function (e) { 
-    $.ui.fancytree.getTree("#tree").filterNodes($(this).val(), {autoExpand: true, leavesOnly: true});
-  });
-}
-
-function showAuthorsTable() {
-  let authorChange = buildAuthorsAmount(g_arr);
-  let cols = [];
-  for (let a of authorChange.aca) {
-    cols.push({ name: a[0], change: a[1], cmts: authorChange.acc.get(a[0]) });
-  }
-
-  cleanAndCloseUiContext([
-    { type: "table", hook: "#tableFiles" },
-    { type: "table", hook: "#tableAuthors" },
-    { type: "tree", hook: "#tree" },
-  ]);
-
-  $("#tableAuthors").DataTable({
-    bAutoWidth: false,
-    order: [[0, "desc"]],
-    pageLength: 10,
-    data: cols,
-    columns: [
-      { data: "change" },
-      { data: "cmts" },
-      {
-        data: "name",
-        render: function (data, type) {
-          let img = $("<img>")
-            .addClass("j-commitViewForAuthor mr10")
-            .attr('style', 'height: 15px')
-            .attr("src", "https://img.icons8.com/material-outlined/32/null/document-writer.png");
-          let txt = $("<span>").text(data);
-          return $("<div>").append(img).append(txt).html();
-        },
-      },
-    ],
-  });
-  $(".j-commitViewForAuthor").click(function () {
-    authorLog($($(this).siblings()[0]).text());
-  });
 }
 
 function showFileTable(cArr) {
@@ -143,10 +61,99 @@ function showFileTable(cArr) {
         },
       },
     ],
+    fnDrawCallback : function ( oSettings ) {
+      $(".j-commitView").click(function () {
+        fileLog($($(this).siblings()[0]).text());
+      });
+    }
   });
-  
-  $(".j-commitView").click(function () {
-    fileLog($($(this).siblings()[0]).text());
+  $("#tableFiles").show();
+}
+
+function showAuthorsTable() {
+  let authorChange = buildAuthorsAmount(g_arr);
+  let cols = [];
+  for (let a of authorChange.aca) {
+    cols.push({ name: a[0], change: a[1], cmts: authorChange.acc.get(a[0]) });
+  }
+
+  cleanAndCloseUiContext([
+    { type: "table", hook: "#tableFiles" },
+    { type: "table", hook: "#tableAuthors" },
+    { type: "tree", hook: "#tree" },
+  ]);
+
+  $("#tableAuthors").DataTable({
+    bAutoWidth: false,
+    order: [[0, "desc"]],
+    pageLength: 10,
+    data: cols,
+    columns: [
+      { data: "change" },
+      { data: "cmts" },
+      {
+        data: "name",
+        render: function (data, type) {
+          let img = $("<img>")
+            .addClass("j-commitViewForAuthor mr10")
+            .attr('style', 'height: 15px')
+            .attr("src", "https://img.icons8.com/material-outlined/32/null/document-writer.png");
+          let txt = $("<span>").text(data);
+          return $("<div>").append(img).append(txt).html();
+        },
+      },
+    ],
+    fnDrawCallback : function ( oSettings ) {
+      $(".j-commitViewForAuthor").click(function () {
+        authorLog($($(this).siblings()[0]).text());
+      });
+    }
+  });  
+
+  $("#tableAuthors").show();
+}
+
+function showFolderTree() {
+  cleanAndCloseUiContext([
+    { type: "table", hook: "#tableFiles" },
+    { type: "table", hook: "#tableAuthors" },
+    { type: "tree", hook: "#tree" },
+  ]);
+
+  $("#tree").fancytree({
+    extensions: ["filter"],
+    filter: {  // override default settings
+      counter: false, // No counter badges
+      mode: "hide"  // "dimm": Grayout unmatched nodes, "hide": remove unmatched nodes
+    },
+    source: buildTreeView(g_arr),
+    enhanceTitle: function (event, data) {
+      let span = $("<span>")
+        .attr("style", "display: inline-block; width: 30px")
+        .text(data.node.data.change);
+      let title = $("<span>").text(data.node.title);
+
+      data.$title.html("").append(span).append(title);
+    },
+    click : function(event, data) {
+      let path = computeTreeNodePath(data.node).substring("/root/".length);
+      if(!data.node.folder)
+        fileLog(path);
+    },
+    beforeExpand: function (event, data) {
+      for (let c of data.node.children) {
+        // put the commits here
+        let path = computeTreeNodePath(c).substring("/root/".length);
+        c.data.change = countCommitsForPath(path);
+        if (c.children != null && c.children.length > 0) c.folder = true;
+      }
+    },
+  });
+
+  $("#tree").show();
+
+  $('#treeSearchInput').keyup(function (e) { 
+    $.ui.fancytree.getTree("#tree").filterNodes($(this).val(), {autoExpand: true, leavesOnly: true});
   });
 }
 
@@ -376,10 +383,13 @@ function extractFileChanges(lines, title) {
     }
 
     let lc = l.split("\t"); // line chunks
+    let ac = parseInt(lc[0]);
+    let cr = parseInt(lc[1]);
+
     files.push({
-      changeA: parseInt(lc[0]),
-      changeR: parseInt(lc[1]),
-      change: parseInt(lc[0]) + parseInt(lc[1]),
+      changeA: isNaN(ac) ? 0 : ac,
+      changeR: isNaN(cr) ? 0 : cr,
+      change: (isNaN(ac) ? 0 : ac) + (isNaN(cr) ? 0 : cr),
       name: lc[2],
     });
   }
