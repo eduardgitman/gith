@@ -1,7 +1,6 @@
 import {
   renderCommitsInDialog,
   renderAuthorCommitsInDialog,
-  cleanAndCloseUiContext,
 } from "./uiupdate.js";
 
 var g_commits;
@@ -14,150 +13,12 @@ function parseText(text) {
   // https://medium.com/@shemar.gordon32/how-to-split-and-keep-the-delimiter-s-d433fb697c65
   let regex = /(?=commit [A-Za-z0-9]{40}[\n])|(?<=commit [A-Za-z0-9]{40}[\n])/i;
 
-  let commits = joinCommitWithBody(text.split(regex));
-
-  g_commits = commits;
-
-  let cArr = parseCommits(commits);
-  g_arr = cArr;
-
+  g_commits = joinCommitWithBody(text.split(regex));
+  g_arr = parseCommits(g_commits);
 }
 
-function showFileTable(cArr) {
-  if (cArr == undefined) {
-    cArr = g_arr;
-  }
-  showDatepicker(cArr);
-
-  let fileChange = buildFileChangeAmount(cArr);
-  let cols = [];
-  for (let f of fileChange.fca) {
-    cols.push({ name: f[0], change: f[1], cmts: fileChange.fcc.get(f[0]) });
-  }
-
-  cleanAndCloseUiContext([
-    { type: "table", hook: "#tableFiles" },
-    { type: "table", hook: "#tableAuthors" },
-    { type: "tree", hook: "#tree" },
-  ]);
-
-  $("#tableFiles").DataTable({
-    bAutoWidth: false,
-    order: [[0, "desc"]],
-    pageLength: 10,
-    data: cols,
-    columns: [
-      { data: "change" },
-      { data: "cmts" },
-      {
-        data: "name",
-        render: function (data, type) {
-          let img = $("<img>")
-            .addClass("j-commitView")
-            .attr('style', 'height: 15px')
-            .attr("src", "https://img.icons8.com/ios/32/null/file--v1.png");
-          let txt = $("<span>").text(data);
-          return $("<div>").append(img).append(txt).html();
-        },
-      },
-    ],
-    fnDrawCallback : function ( oSettings ) {
-      $(".j-commitView").click(function () {
-        fileLog($($(this).siblings()[0]).text());
-      });
-    }
-  });
-  $("#tableFiles").show();
-}
-
-function showAuthorsTable() {
-  let authorChange = buildAuthorsAmount(g_arr);
-  let cols = [];
-  for (let a of authorChange.aca) {
-    cols.push({ name: a[0], change: a[1], cmts: authorChange.acc.get(a[0]) });
-  }
-
-  cleanAndCloseUiContext([
-    { type: "table", hook: "#tableFiles" },
-    { type: "table", hook: "#tableAuthors" },
-    { type: "tree", hook: "#tree" },
-  ]);
-
-  $("#tableAuthors").DataTable({
-    bAutoWidth: false,
-    order: [[0, "desc"]],
-    pageLength: 10,
-    data: cols,
-    columns: [
-      { data: "change" },
-      { data: "cmts" },
-      {
-        data: "name",
-        render: function (data, type) {
-          let img = $("<img>")
-            .addClass("j-commitViewForAuthor mr10")
-            .attr('style', 'height: 15px')
-            .attr("src", "https://img.icons8.com/material-outlined/32/null/document-writer.png");
-          let txt = $("<span>").text(data);
-          return $("<div>").append(img).append(txt).html();
-        },
-      },
-    ],
-    fnDrawCallback : function ( oSettings ) {
-      $(".j-commitViewForAuthor").click(function () {
-        authorLog($($(this).siblings()[0]).text());
-      });
-    }
-  });  
-
-  $("#tableAuthors").show();
-}
-
-function showFolderTree() {
-  cleanAndCloseUiContext([
-    { type: "table", hook: "#tableFiles" },
-    { type: "table", hook: "#tableAuthors" },
-    { type: "tree", hook: "#tree" },
-  ]);
-
-  $("#tree").fancytree({
-    extensions: ["filter"],
-    filter: {  // override default settings
-      counter: false, // No counter badges
-      mode: "hide"  // "dimm": Grayout unmatched nodes, "hide": remove unmatched nodes
-    },
-    source: buildTreeView(g_arr),
-    enhanceTitle: function (event, data) {
-      let span = $("<span>")
-        .attr("style", "display: inline-block; width: 30px")
-        .text(data.node.data.change);
-      let title = $("<span>").text(data.node.title);
-
-      data.$title.html("").append(span).append(title);
-    },
-    click : function(event, data) {
-      let path = computeTreeNodePath(data.node).substring("/root/".length);
-      if(!data.node.folder)
-        fileLog(path);
-    },
-    beforeExpand: function (event, data) {
-      for (let c of data.node.children) {
-        // put the commits here
-        let path = computeTreeNodePath(c).substring("/root/".length);
-        c.data.change = countCommitsForPath(path);
-        if (c.children != null && c.children.length > 0) c.folder = true;
-      }
-    },
-  });
-
-  $("#tree").show();
-
-  $('#treeSearchInput').keyup(function (e) { 
-    $.ui.fancytree.getTree("#tree").filterNodes($(this).val(), {autoExpand: true, leavesOnly: true});
-  });
-}
-
-function buildTreeView(cArr) {
+function buildTreeView() {
+  let cArr = g_arr;
   // c is an object with: hash, author, authorEmail, date, title, files
   // files is an array with: changeA, changeR, change, name
   let paths = [];
@@ -221,7 +82,8 @@ function computeTreeNodePath(node) {
   }
 }
 
-function buildAuthorsAmount(cArr) {
+function buildAuthorsAmount() {
+  let cArr = g_arr;
   const aMap = new Map();
   const aCC = new Map();
   // c is an object with: hash, author, authorEmail, date, title, files
@@ -250,7 +112,8 @@ function buildAuthorsAmount(cArr) {
   return { aca: aMap, acc: aCC };
 }
 
-function buildFileChangeAmount(cArr) {
+function buildFileChangeAmount() {
+  let cArr = g_arr;
   const fileMap = new Map();
   const fileCC = new Map();
   for (let c of cArr) {
@@ -422,4 +285,4 @@ function getCommit(hash) {
   }
 }
 
-export { parseText, fileLog, showFileTable, showAuthorsTable, showFolderTree, getCommit};
+export { parseText, fileLog, authorLog, buildFileChangeAmount, buildAuthorsAmount, buildTreeView, countCommitsForPath, computeTreeNodePath, getCommit};

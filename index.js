@@ -1,4 +1,5 @@
-import { parseText, showFileTable, showAuthorsTable, showFolderTree } from "./modules/parse.js";
+import { parseText } from "./modules/parse.js";
+import { showFileTable, showAuthorsTable, showFolderTree } from "./modules/render.js";
 
 const menuToPanel = [
   {menu: '.j-menuFiles', panel: '.j-filesPanel'},
