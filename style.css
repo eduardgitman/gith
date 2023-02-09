@@ -1,3 +1,12 @@
+@font-face {
+  font-family: inconsolata;
+  src: url(inconsolata/Inconsolata-Regular.ttf);
+}
+
+.consoleFont {
+  font-family: inconsolata;
+}
+
 .wrapper {
   margin-top: 70px;
 }

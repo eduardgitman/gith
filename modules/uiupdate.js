@@ -3,7 +3,7 @@ import { getCommit } from './parse.js'
 function renderCommitsInDialog(commits, fileName) {
   $("#dialog").dialog("option", "title", "Log for " + fileName);
 
-  switchUiContext([
+  cleanAndCloseUiContext([
     { type: "table", hook: "#dialogAuthorTable" },
     { type: "table", hook: "#dialogTable" },
   ]);
@@ -62,7 +62,7 @@ function renderCommitsInDialog(commits, fileName) {
 function renderAuthorCommitsInDialog(commits, author) {
   $("#dialog").dialog("option", "title", "Commits by " + author);
 
-  switchUiContext([
+  cleanAndCloseUiContext([
     { type: "table", hook: "#dialogAuthorTable" },
     { type: "table", hook: "#dialogTable" },
   ]);
@@ -142,7 +142,7 @@ function renderChangesColumn(caNo, crNo, isWide) {
   return $("<span>").append(ca).append(cr).html();
 }
 
-function switchUiContext(elements) {
+function cleanAndCloseUiContext(elements) {
   for (let e of elements) {
     if (e.type == "table") {
       if ($.fn.dataTable.isDataTable(e.hook)) {
@@ -158,4 +158,4 @@ function switchUiContext(elements) {
   }
 }
 
-export { renderCommitsInDialog, renderAuthorCommitsInDialog, switchUiContext };
+export { renderCommitsInDialog, renderAuthorCommitsInDialog, cleanAndCloseUiContext };

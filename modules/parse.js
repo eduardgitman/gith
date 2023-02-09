@@ -1,7 +1,7 @@
 import {
   renderCommitsInDialog,
   renderAuthorCommitsInDialog,
-  switchUiContext,
+  cleanAndCloseUiContext,
 } from "./uiupdate.js";
 
 var g_commits;
@@ -25,7 +25,7 @@ function parseText(text) {
 }
 
 function showFolderTree() {
-  switchUiContext([
+  cleanAndCloseUiContext([
     { type: "table", hook: "#tableFiles" },
     { type: "table", hook: "#tableAuthors" },
     { type: "tree", hook: "#tree" },
@@ -60,10 +60,8 @@ function showFolderTree() {
       }
     },
   });
-  $("#tree").show();
 
   $('#treeSearchInput').keyup(function (e) { 
-
     $.ui.fancytree.getTree("#tree").filterNodes($(this).val(), {autoExpand: true, leavesOnly: true});
   });
 }
@@ -75,7 +73,7 @@ function showAuthorsTable() {
     cols.push({ name: a[0], change: a[1], cmts: authorChange.acc.get(a[0]) });
   }
 
-  switchUiContext([
+  cleanAndCloseUiContext([
     { type: "table", hook: "#tableFiles" },
     { type: "table", hook: "#tableAuthors" },
     { type: "tree", hook: "#tree" },
@@ -84,7 +82,7 @@ function showAuthorsTable() {
   $("#tableAuthors").DataTable({
     bAutoWidth: false,
     order: [[0, "desc"]],
-    pageLength: 25,
+    pageLength: 10,
     data: cols,
     columns: [
       { data: "change" },
@@ -94,6 +92,7 @@ function showAuthorsTable() {
         render: function (data, type) {
           let img = $("<img>")
             .addClass("j-commitViewForAuthor mr10")
+            .attr('style', 'height: 15px')
             .attr("src", "https://img.icons8.com/material-outlined/32/null/document-writer.png");
           let txt = $("<span>").text(data);
           return $("<div>").append(img).append(txt).html();
@@ -101,19 +100,14 @@ function showAuthorsTable() {
       },
     ],
   });
-  $("#tableAuthors").show();
-
   $(".j-commitViewForAuthor").click(function () {
     authorLog($($(this).siblings()[0]).text());
   });
-  $(".j-inputForm").hide();
-  $(".j-processPanel").show();
 }
 
 function showFileTable(cArr) {
   if (cArr == undefined) {
     cArr = g_arr;
-    showFolderTree;
   }
   showDatepicker(cArr);
 
@@ -123,7 +117,7 @@ function showFileTable(cArr) {
     cols.push({ name: f[0], change: f[1], cmts: fileChange.fcc.get(f[0]) });
   }
 
-  switchUiContext([
+  cleanAndCloseUiContext([
     { type: "table", hook: "#tableFiles" },
     { type: "table", hook: "#tableAuthors" },
     { type: "tree", hook: "#tree" },
@@ -132,7 +126,7 @@ function showFileTable(cArr) {
   $("#tableFiles").DataTable({
     bAutoWidth: false,
     order: [[0, "desc"]],
-    pageLength: 50,
+    pageLength: 10,
     data: cols,
     columns: [
       { data: "change" },
@@ -142,6 +136,7 @@ function showFileTable(cArr) {
         render: function (data, type) {
           let img = $("<img>")
             .addClass("j-commitView")
+            .attr('style', 'height: 15px')
             .attr("src", "https://img.icons8.com/ios/32/null/file--v1.png");
           let txt = $("<span>").text(data);
           return $("<div>").append(img).append(txt).html();
@@ -149,13 +144,10 @@ function showFileTable(cArr) {
       },
     ],
   });
-  $("#tableFiles").show();
-
+  
   $(".j-commitView").click(function () {
     fileLog($($(this).siblings()[0]).text());
   });
-  $(".j-inputForm").hide();
-  $(".j-processPanel").show();
 }
 
 function buildTreeView(cArr) {

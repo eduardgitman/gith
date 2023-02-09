@@ -85,7 +85,7 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-      <a class="navbar-brand" href="/">Git LOG</a>
+      <a class="navbar-brand" href="/">GIT log viewer</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -100,8 +100,11 @@
 
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item active j-menuFiles">
-            <a class="nav-link" href="/">Files</a>
+          <li class="nav-item active j-menuHome">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item j-menuFiles">
+            <a class="nav-link" href="#">Files</a>
           </li>
           <li class="nav-item j-menuAuthors">
             <a class="nav-link" href="#">Authors</a>
@@ -121,31 +124,26 @@
 
     <main class="container" role="main">
       <div class="wrapper">
-        <div style="margin: 0 auto">
-          <h2>Git histogram</h2>
-          <span
-            >pro tip: on first use read the helpers
-            <i
-              class="bi bi-question-circle"
-              title="I will explain the functionality "
-            ></i>
-          </span>
+          <div class="j-firstPageInfo" style="margin-bottom: 40px;">
+            <h4>Do you want to see what happend on you git repo in the last few months ? </h4>
+            <h4>just upload your git log here and find out</h4>
+            <h6>the file is processed on the client side, your information doesn't go anywhere !</h6>
+            <h6>please use the result of: <span class="consoleFont">git log --since="6 months ago"</span>, check 
+                <a href="https://www.git-scm.com/docs/git-log" target="_blank">git log </a> for details.</h6>
 
-          <div class="j-inputForm">
-            <h4>To process the log and view the results please upload it</h4>
-            <form id="form" onsubmit="loadLog(); return false;">
-              <div class="form-group">
-                <input type="file" id="files" class="form-control-file" />
-                <br />
-                <i
-                  class="bi bi-question-circle"
-                  title="On click, the process will automatically begin and is instant, if nothing happens please check console for errors"
-                ></i>
-                <input type="submit" value="Upload" class="btn btn-primary" />
-                <input type="reset" value="Clear" class="btn btn-secondary" />
-              </div>
-            </form>
-            <div class="flexCenter">
+            <div class="j-inputForm" style="margin-top: 40px;">
+              <form id="form" onsubmit="loadLog(); return false;">
+                <div class="mb-3">
+                  <label for="files" class="form-label">pick up you git log:</label>
+                  <input class="form-control" type="file" id="files">
+                </div>
+                <div class="mb-3">
+                  <i class="bi bi-question-circle"
+                    title="On click, the process will automatically begin and is instant, if nothing happens please check console for errors"></i>
+                  <input type="submit" value="Upload" class="btn btn-primary" />
+                  <input type="reset" value="Clear" class="btn btn-secondary" />
+                </div>
+              </form>
             </div>
           </div>
 
@@ -168,31 +166,37 @@
             </div> -->
             
             <!-- <div > tree search: <input id="treeSearchInput" type="text"> </div> -->
-            <div id="tree"></div>
-
-            <table id="tableFiles" class="display" style="width:100%">
-              <thead>
-                  <tr>
-                      <th>changes</th>
-                      <th>commits</th>
-                      <th>paths</th>
-                  </tr>
-              </thead>
-              <tbody>                  
-              </tbody>
-          </table>
-
-          <table id="tableAuthors" class="display" style="width:100%">
-            <thead>
-                <tr>
-                    <th>changes</th>
-                    <th>commits</th>
-                    <th>author</th>
-                </tr>
-            </thead>
-            <tbody>                  
-            </tbody>
-        </table>
+            <div class="j-treePanel">
+              <div id="tree"></div>
+            </div>
+            
+            <div class="j-filesPanel">
+              <table id="tableFiles" class="display" style="width:100%; font-size: 12px;">
+                <thead>
+                    <tr>
+                        <th>changes</th>
+                        <th>commits</th>
+                        <th>paths</th>
+                    </tr>
+                </thead>
+                <tbody>                  
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="j-authorsPanel">
+              <table id="tableAuthors" class="display" style="width:100%;  font-size: 12px;">
+                <thead>
+                    <tr>
+                        <th>changes</th>
+                        <th>commits</th>
+                        <th>author</th>
+                    </tr>
+                </thead>
+                <tbody>                  
+                </tbody>
+              </table>
+            </div>            
           </div>
         </div>
       </div>
@@ -233,7 +237,8 @@
 
     <footer class="footer">
       <div class="container">
-        <span class="text-muted">Place sticky footer content here.</span>
+        <span class="text-muted">GIT LOG viewer©. Developed by 
+          <a href="https://github.com/gitmanalex" target="_blank">Alexandru Gitman</a>.</span>
       </div>
     </footer>
   </body>
