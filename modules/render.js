@@ -157,12 +157,16 @@ function showCalendar() {
     { type: "tree", hook: "#tree" },
     { type: "calendar", hook: "#calendar" },
   ]);
-  
-  var $cal = $('#calendar');
+
+  let calendarDate = buildCalendarView();
+  for(const [key, value] of calendarDate.authors) {
+    $('#authors').append($('<span>').attr('style', 'color: white; margin-right:10px; background-color:' + value).text(key));
+  }
+  var $cal = $('#calendar');  
   $cal.zabuto_calendar({
     today_markup: '<span style="color: white" class="badge bg-primary">[day]</span>',
     classname: 'table table-bordered lightgrey-weekends',
-    events: buildCalendarView()
+    events: calendarDate.events
   });
 
   $cal.on('zabuto:calendar:goto', function (e) {

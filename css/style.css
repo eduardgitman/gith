@@ -114,4 +114,10 @@ body {
 
 .eventLine {
   font-size: 10px;
+  text-align: left;
+  margin-bottom: 3px;
+}
+
+.zabuto-calendar.table td {
+  vertical-align: top;
 }

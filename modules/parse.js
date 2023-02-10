@@ -6,6 +6,29 @@ import {
 var g_commits;
 var g_arr;
 
+const colors = [
+  "#e6194B",
+  "#3cb44b",  
+  "#4363d8",
+  "#f58231",
+  "#911eb4",  
+  "#f032e6",
+  "#469990",  
+  "#9A6324",  
+  "#800000",  
+  "#808000",  
+  "#000075",
+  "#a9a9a9",
+  "#ffe119",
+  "#42d4f4",
+  "#bfef45",
+  "#aaffc3",
+  "#fabed4",
+  "#dcbeff",
+  "#fffac8",
+  "#ffd8b1"
+];
+
 function parseText(text) {
   console.log("Start Parsing Log Entries");
 
@@ -114,25 +137,31 @@ function buildAuthorsAmount() {
 
 function buildCalendarView() {
   const map = new Map();
+  const authorMap = new Map();
 
   // c is an object with: hash, author, authorEmail, date, title, files
   // files is an array with: changeA, changeR, change, name
+  let colorIndex = 0;
   for (let c of g_arr) {
     let dateTime = new Date(c.date);
-    let m = dateTime.getMonth() + 1;    
-    let mm = m < 10 ? '0' + m : m;
+    let m = dateTime.getMonth() + 1;
+    let mm = m < 10 ? "0" + m : m;
     let d = dateTime.getDate();
-    let dd = d < 10 ? '0' + d : d;
-    let date = dateTime.getFullYear() + '-' + mm + '-' + dd;
+    let dd = d < 10 ? "0" + d : d;
+    let date = dateTime.getFullYear() + "-" + mm + "-" + dd;
 
-    if(map.has(date)) {
+    if (map.has(date)) {
       let old = map.get(date);
       old.push(c);
       map.set(date, old);
     } else {
-      let a = new Array ();
+      let a = new Array();
       a.push(c);
       map.set(date, a);
+    }
+
+    if (!authorMap.has(c.author)) {
+      authorMap.set(c.author, colors[(colorIndex++)%20]);
     }
   }
 
@@ -143,8 +172,8 @@ function buildCalendarView() {
     for(let c of value) {
       let shortTitle = c.title.substring(0,26);
       markup = markup + 
-        '<div class=\'eventLine\' title=\'' + (c.title + ' by ' + c.author ) + 
-        '\'><a href=\'#\' data-hash=\''+c.hash+'\' class=\'j-calendarHash\'>' + shortTitle + '</a></div>';
+        '<div class=\'eventLine\' style=\'background-color:' + authorMap.get(c.author) + '\' title=\'' + (c.title + ' by ' + c.author ) + 
+        '\'><a href=\'#\' style=\'color:white\' data-hash=\''+c.hash+'\' class=\'j-calendarHash\'>' + shortTitle + '</a></div>';
     }
 
     events.push(
@@ -154,8 +183,8 @@ function buildCalendarView() {
       }
     )    
   }
-  
-  return events;
+
+  return {events: events, authors: authorMap };
 }
 
 function buildFileChangeAmount() {
@@ -331,4 +360,15 @@ function getCommit(hash) {
   }
 }
 
-export { parseText, fileLog, authorLog, buildFileChangeAmount, buildAuthorsAmount, buildTreeView, buildCalendarView, countCommitsForPath, computeTreeNodePath, getCommit};
+export {
+  parseText,
+  fileLog,
+  authorLog,
+  buildFileChangeAmount,
+  buildAuthorsAmount,
+  buildTreeView,
+  buildCalendarView,
+  countCommitsForPath,
+  computeTreeNodePath,
+  getCommit,
+};
