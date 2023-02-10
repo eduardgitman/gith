@@ -22,6 +22,7 @@ function showFileTable() {
     { type: "table", hook: "#tableFiles" },
     { type: "table", hook: "#tableAuthors" },
     { type: "tree", hook: "#tree" },
+    { type: "calendar", hook: "#calendar" },
   ]);
 
   $("#tableFiles").DataTable({
@@ -64,6 +65,7 @@ function showAuthorsTable() {
     { type: "table", hook: "#tableFiles" },
     { type: "table", hook: "#tableAuthors" },
     { type: "tree", hook: "#tree" },
+    { type: "calendar", hook: "#calendar" },
   ]);
 
   $("#tableAuthors").DataTable({
@@ -104,6 +106,7 @@ function showFolderTree() {
     { type: "table", hook: "#tableFiles" },
     { type: "table", hook: "#tableAuthors" },
     { type: "tree", hook: "#tree" },
+    { type: "calendar", hook: "#calendar" },
   ]);
 
   $("#tree").fancytree({
@@ -148,6 +151,13 @@ function showFolderTree() {
 }
 
 function showCalendar() {
+  cleanAndCloseUiContext([
+    { type: "table", hook: "#tableFiles" },
+    { type: "table", hook: "#tableAuthors" },
+    { type: "tree", hook: "#tree" },
+    { type: "calendar", hook: "#calendar" },
+  ]);
+  
   var $cal = $('#calendar');
   $cal.zabuto_calendar({
     today_markup: '<span style="color: white" class="badge bg-primary">[day]</span>',
@@ -168,6 +178,8 @@ function showCalendar() {
     let hash = $(this).attr('data-hash');
     showCommit(hash);
   })  
+
+  $cal.show();
 }
 
 export { showFileTable, showAuthorsTable, showFolderTree, showCalendar };

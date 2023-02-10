@@ -157,6 +157,11 @@ function cleanAndCloseUiContext(elements) {
       // figure out how to destroy
       $(e.hook).hide();
     }
+
+    if (e.type == "calendar") {
+      // figure out how to destroy
+      $(e.hook).hide();
+    }
   }
 }
 
