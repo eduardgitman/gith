@@ -160,4 +160,4 @@ function cleanAndCloseUiContext(elements) {
   }
 }
 
-export { renderCommitsInDialog, renderAuthorCommitsInDialog, cleanAndCloseUiContext };
+export { renderCommitsInDialog, renderAuthorCommitsInDialog, cleanAndCloseUiContext, showCommit };

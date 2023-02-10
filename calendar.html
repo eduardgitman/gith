@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://raw.githubusercontent.com/kthornbloom/Monthly/master/css/monthly.css"
+    />
+    <link rel="stylesheet" href="lib/style.css" />
+    <script src="lib/script.js"></script>
+  </head>
+
+  <body>
+    <h1>Hello Calendar</h1>
+    <div class="monthly" id="mycalendar"></div>
+  </body>
+
+  <script
+    type="text/javascript"
+    src="https://raw.githubusercontent.com/kthornbloom/Monthly/master/js/jquery.js"
+  ></script>
+  <script
+    type="text/javascript"
+    src="https://raw.githubusercontent.com/kthornbloom/Monthly/master/js/monthly.js"
+  ></script>
+  <script type="text/javascript">
+    $(window).load(function () {
+      $('#mycalendar').monthly();
+    });
+  </script>
+</html>

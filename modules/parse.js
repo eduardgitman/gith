@@ -112,6 +112,52 @@ function buildAuthorsAmount() {
   return { aca: aMap, acc: aCC };
 }
 
+function buildCalendarView() {
+  const map = new Map();
+
+  // c is an object with: hash, author, authorEmail, date, title, files
+  // files is an array with: changeA, changeR, change, name
+  for (let c of g_arr) {
+    let dateTime = new Date(c.date);
+    let m = dateTime.getMonth() + 1;    
+    let mm = m < 10 ? '0' + m : m;
+    let d = dateTime.getDate();
+    let dd = d < 10 ? '0' + d : d;
+    let date = dateTime.getFullYear() + '-' + mm + '-' + dd;
+
+    if(map.has(date)) {
+      let old = map.get(date);
+      old.push(c);
+      map.set(date, old);
+    } else {
+      let a = new Array ();
+      a.push(c);
+      map.set(date, a);
+    }
+  }
+
+  let events = [];
+  for (const [key, value] of map) {
+    let markup = '<div class=\'calendarDay\'>[day]</div>';
+    
+    for(let c of value) {
+      let shortTitle = c.title.substring(0,26);
+      markup = markup + 
+        '<div class=\'eventLine\' title=\'' + (c.title + ' by ' + c.author ) + 
+        '\'><a href=\'#\' data-hash=\''+c.hash+'\' class=\'j-calendarHash\'>' + shortTitle + '</a></div>';
+    }
+
+    events.push(
+      {
+        'date': key,
+        'markup': markup
+      }
+    )    
+  }
+  
+  return events;
+}
+
 function buildFileChangeAmount() {
   let cArr = g_arr;
   const fileMap = new Map();
@@ -285,4 +331,4 @@ function getCommit(hash) {
   }
 }
 
-export { parseText, fileLog, authorLog, buildFileChangeAmount, buildAuthorsAmount, buildTreeView, countCommitsForPath, computeTreeNodePath, getCommit};
+export { parseText, fileLog, authorLog, buildFileChangeAmount, buildAuthorsAmount, buildTreeView, buildCalendarView, countCommitsForPath, computeTreeNodePath, getCommit};

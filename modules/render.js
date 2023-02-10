@@ -2,13 +2,14 @@ import {
   buildFileChangeAmount,
   buildAuthorsAmount,
   buildTreeView,
+  buildCalendarView,
   countCommitsForPath,
   computeTreeNodePath,
   authorLog,
   fileLog,
 } from "./parse.js";
 
-import { cleanAndCloseUiContext } from "./uiupdate.js";
+import { cleanAndCloseUiContext, showCommit } from "./uiupdate.js";
 
 function showFileTable() {
   let fileChange = buildFileChangeAmount();
@@ -146,4 +147,23 @@ function showFolderTree() {
   });
 }
 
-export { showFileTable, showAuthorsTable, showFolderTree };
+function showCalendar() {
+  var $cal = $('#calendar');
+  $cal.zabuto_calendar({
+    today_markup: '<span style="color: white" class="badge bg-primary">[day]</span>',
+    classname: 'table table-bordered lightgrey-weekends',
+    events: buildCalendarView()
+  });
+
+  // $cal.on('zabuto:calendar:day', function (e) {
+  //   console.log(e)
+  // });
+
+  $('.j-calendarHash').click(function(e){
+    let hash = $(this).attr('data-hash');
+    showCommit(hash);
+  })
+  
+}
+
+export { showFileTable, showAuthorsTable, showFolderTree, showCalendar };

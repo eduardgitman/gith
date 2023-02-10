@@ -1,10 +1,11 @@
 import { parseText } from "./modules/parse.js";
-import { showFileTable, showAuthorsTable, showFolderTree } from "./modules/render.js";
+import { showFileTable, showAuthorsTable, showFolderTree, showCalendar } from "./modules/render.js";
 
 const menuToPanel = [
   {menu: '.j-menuFiles', panel: '.j-filesPanel'},
   {menu: '.j-menuAuthors', panel: '.j-authorsPanel'},
   {menu: '.j-menuFolders', panel: '.j-treePanel'},
+  {menu: '.j-menuCalendar', panel: '.jj-calendarPanel'},  
   {menu: '.j-menuHelp', panel: '.j-helpPanel'}
 ]
 
@@ -46,6 +47,11 @@ function linkMenuEvents() {
     showFolderTree();
     setMenuActive($(this));
   })  
+
+  $('.j-menuCalendar').click(function(event){    
+    showCalendar();
+    setMenuActive($(this));
+  })   
 
   $('.j-menuHelp').click(function(event){   
     setMenuActive($(this));
