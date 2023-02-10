@@ -155,15 +155,19 @@ function showCalendar() {
     events: buildCalendarView()
   });
 
-  // $cal.on('zabuto:calendar:day', function (e) {
-  //   console.log(e)
-  // });
-
+  $cal.on('zabuto:calendar:goto', function (e) {
+    setTimeout(function() { 
+      $('.j-calendarHash').click(function(e){
+        let hash = $(this).attr('data-hash');
+        showCommit(hash);
+      })
+     }, 500);    
+  });
+  
   $('.j-calendarHash').click(function(e){
     let hash = $(this).attr('data-hash');
     showCommit(hash);
-  })
-  
+  })  
 }
 
 export { showFileTable, showAuthorsTable, showFolderTree, showCalendar };
