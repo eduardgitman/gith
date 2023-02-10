@@ -3,8 +3,17 @@
   src: url(inconsolata/Inconsolata-Regular.ttf);
 }
 
+@font-face {
+  font-family: inconsolataBold;
+  src: url(inconsolata/Inconsolata-Bold.ttf);
+}
+
 .consoleFont {
   font-family: inconsolata;
+}
+
+.consoleFontBold {
+  font-family: inconsolataBold;
 }
 
 .wrapper {
@@ -120,4 +129,11 @@ body {
 
 .zabuto-calendar.table td {
   vertical-align: top;
+}
+
+.authorLabel{
+  color: white; 
+  margin-right:10px; 
+  padding:3px; 
+  font-family: inconsolataBold;
 }

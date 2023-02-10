@@ -11,8 +11,8 @@ import {
 
 import { cleanAndCloseUiContext, showCommit } from "./uiupdate.js";
 
-function showFileTable() {
-  let fileChange = buildFileChangeAmount();
+function showFileTable(text) {
+  let fileChange = buildFileChangeAmount(text);
   let cols = [];
   for (let f of fileChange.fca) {
     cols.push({ name: f[0], change: f[1], cmts: fileChange.fcc.get(f[0]) });
@@ -51,11 +51,17 @@ function showFileTable() {
       });
     },
   });
+  $("#fileSearchInput").keyup(function(e){
+    if (e.key === "Enter" || e.keyCode === 13) {
+      showFileTable($(this).val());
+    }
+  })
+    
   $("#tableFiles").show();
 }
 
-function showAuthorsTable() {
-  let authorChange = buildAuthorsAmount();
+function showAuthorsTable(text) {
+  let authorChange = buildAuthorsAmount(text);
   let cols = [];
   for (let a of authorChange.aca) {
     cols.push({ name: a[0], change: a[1], cmts: authorChange.acc.get(a[0]) });
@@ -98,6 +104,11 @@ function showAuthorsTable() {
     },
   });
 
+  $("#authorSearchInput").keyup(function(e){
+    if (e.key === "Enter" || e.keyCode === 13) {
+      showAuthorsTable($(this).val());
+    }
+  })
   $("#tableAuthors").show();
 }
 
@@ -126,6 +137,8 @@ function showFolderTree() {
       data.$title.html("").append(span).append(title);
     },
     click: function (event, data) {
+      if(data.node.folder)
+        return;
       let path = computeTreeNodePath(data.node).substring("/root/".length);
       fileLog(path);
     },
@@ -160,7 +173,8 @@ function showCalendar() {
 
   let calendarDate = buildCalendarView();
   for(const [key, value] of calendarDate.authors) {
-    $('#authors').append($('<span>').attr('style', 'color: white; margin-right:10px; background-color:' + value).text(key));
+    $('#authors').append($('<span>').addClass('authorLabel')
+      .attr('style', 'background-color:' + value).text(key));
   }
   var $cal = $('#calendar');  
   $cal.zabuto_calendar({

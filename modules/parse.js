@@ -105,13 +105,16 @@ function computeTreeNodePath(node) {
   }
 }
 
-function buildAuthorsAmount() {
+function buildAuthorsAmount(text) {
   let cArr = g_arr;
   const aMap = new Map();
   const aCC = new Map();
   // c is an object with: hash, author, authorEmail, date, title, files
   // files is an array with: changeA, changeR, change, name
   for (let c of cArr) {
+    if( text != undefined && c.title.indexOf(text) < 0) {
+      continue;
+    }
     // count commits per author
     if (aCC.has(c.author)) {
       let old = aCC.get(c.author);
@@ -187,11 +190,14 @@ function buildCalendarView() {
   return {events: events, authors: authorMap };
 }
 
-function buildFileChangeAmount() {
+function buildFileChangeAmount(text) {
   let cArr = g_arr;
   const fileMap = new Map();
   const fileCC = new Map();
   for (let c of cArr) {
+    if( text != undefined && c.title.indexOf(text) < 0) {
+        continue;
+    }
     for (let f of c.files) {
       // count commits
       if (fileCC.has(f.name)) {

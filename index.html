@@ -105,7 +105,7 @@
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active j-menuHome">
-            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="#">Home</a>
           </li>
           <li class="nav-item j-menuFiles">
             <a class="nav-link" href="#">Files</a>
@@ -159,6 +159,18 @@
               <div style="display: flex; justify-content: center; margin-bottom: 20px;">
                 <h5 style="display: inline-block;">Most active files</h5>
               </div>
+              
+              <div class="mb-3">
+                <div class="row align-items-start"> 
+                  <div class="col4">
+                    <label for="fileSearchInput" class="form-label">search for commit message:</label>
+                    <input id="fileSearchInput" class="form-control" type="text">                    
+                  </div>                  
+                  <div class="col1" style="margin-top: 36px;">
+                    <img src="https://img.icons8.com/ios/32/null/info--v1.png" title="Press ENTER to filter, empty and press ENTER to reset"/>
+                  </div>
+                </div>
+              </div>
 
               <table id="tableFiles" class="display" style="width:100%; font-size: 12px;">
                 <thead>
@@ -178,6 +190,18 @@
                 <h5 style="display: inline-block;">Most active users</h5>
               </div>
               
+              <div class="mb-3">
+                <div class="row align-items-start"> 
+                  <div class="col4">
+                    <label for="authorSearchInput" class="form-label">search for commit message:</label>
+                    <input id="authorSearchInput" class="form-control" type="text">                    
+                  </div>                  
+                  <div class="col1" style="margin-top: 36px;">
+                    <img src="https://img.icons8.com/ios/32/null/info--v1.png" title="Press ENTER to filter, empty and press ENTER to reset"/>
+                  </div>
+                </div>                
+              </div>
+
               <table id="tableAuthors" class="display" style="width:100%;  font-size: 12px;">
                 <thead>
                     <tr>
@@ -201,7 +225,10 @@
                   <div class="col2">
                     <label for="treeSearchInput" class="form-label">search for files:</label>
                     <input id="treeSearchInput" class="form-control" type="text">
-                  </div>                  
+                  </div>   
+                  <div class="col1" style="margin-top: 36px;">
+                    <img src="https://img.icons8.com/ios/32/null/info--v1.png" title="Press ENTER to filter, empty and press ENTER to reset"/>
+                  </div>               
                 </div>                
               </div>
 
@@ -209,7 +236,7 @@
             </div>
             
             <div class="j-calendarPanel">
-                <div id="authors"></div>
+                <div id="authors" style="margin-bottom: 10px; display: flex;"></div>
                 <div id="calendar"></div>
             </div>
 

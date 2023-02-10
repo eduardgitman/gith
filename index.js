@@ -6,7 +6,8 @@ const menuToPanel = [
   {menu: '.j-menuAuthors', panel: '.j-authorsPanel'},
   {menu: '.j-menuFolders', panel: '.j-treePanel'},
   {menu: '.j-menuCalendar', panel: '.jj-calendarPanel'},  
-  {menu: '.j-menuHelp', panel: '.j-helpPanel'}
+  {menu: '.j-menuHelp', panel: '.j-helpPanel'},
+  {menu: '.j-menuHome', panel: '.j-firstPageInfo'}
 ]
 
 function initApplication() {
@@ -32,6 +33,12 @@ function initApplication() {
 }
 
 function linkMenuEvents() {  
+
+  
+  $('.j-menuHome').click(function(event){    
+    showFileTable();
+    setMenuActive($(this));
+  })
 
   $('.j-menuFiles').click(function(event){    
     showFileTable();
