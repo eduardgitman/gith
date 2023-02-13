@@ -6,6 +6,7 @@ import {
 var g_commits;
 var g_arr;
 
+// authors colors
 const colors = [
   "#e6194B",
   "#3cb44b",  

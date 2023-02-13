@@ -229,7 +229,51 @@
 
 
             <div class="j-helpPanel">
-                This will come latter :) 
+                <h5>This is a utility app for viewing and refine search of a <span class="consoleFont">git log --numstat</span> comand.</h5>
+                
+                <br/>
+                
+                <p>To use it you have to uploaded your own file with the specific format given by git log</p>
+                <pre>
+                  <code>
+                    commit de0dd1825c6dabee3a253d42898cec80ab91fe11
+                    Author: GITMAN Alexandru &lt;email@hoast.com&gt;
+                    Date:   Mon Feb 13 10:06:11 2023 +0100
+
+                    Commit title
+
+                    1       1       css/style.css</code>
+                </pre>
+                
+                <p>This application does <b>not</b> send the files upload to any server, it can be run locally with a simple http server.</p>
+
+                <p>After parsing the uploaded file, you can access the the four view from the top menu:</p>
+                <p><b>Files</b>: presents a table with the most changed files along with the number of commits, this can be 
+                  ordered and filtered to get a better idea of what are the most impacted files. Clicking the file icon you 
+                  can view a more detailed table of the commits containing the file along with dates, authors and changes. 
+                  Clicking the hash link you can further explore the specific commit as found in the original log.</p>
+                
+                <p><b>Authors</b>: presents a table with the most active authors along with the number of commits and changes, this can be 
+                  ordered and filtered to get a better idea of authors activity. Clicking the author icon you 
+                  can view a more detailed table of the commits made by the author. 
+                  Clicking the hash link you can further explore the specific commit as found in the original log.</p>
+
+                <p><b>Folders</b>: presents a structured tree view of the project, with the number of changes for each folder.
+                  You can search by file name which will automatically expand the tree to view the matching files.
+                  You can expand the tree, clicking on a file you can view the table of commits containing it.
+                  Clicking the hash link you can further explore the specific commit as found in the original log.
+                </p>
+
+                <p><b>Calendar</b>: presents a monthly view of the commits along with the authors. By clicking on a Commit
+                  in the calendar you can view the specific commit as found in the original log.</p>
+
+                <p><b>Filtering</b>: on top of each page you can find a searching panel that gives the possibility to refine 
+                  the content you get on the page. We have a basic search row that can be used to filter commits by 
+                  title, author, containing file names or commit date. We can also add a comparator for each field.<br/>
+                  Text fields (title, author, file name) have additional optional case sensitive search. <br/>
+                  Date field has the option to search before, after or between two dates.<br/>
+                  You can use up to four search rows refining the search as you wish.
+                </p>  
             </div>
           </div>
         </div>
