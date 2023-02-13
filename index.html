@@ -66,8 +66,9 @@
 
     <script type="module">
       // import minimal functions
-      import { initApplication } from "./index.js";
+      import { initApplication, linkMenuEvents } from "./index.js";
       window.init = initApplication;
+      linkMenuEvents();
       // hide the dialog
       $("#dialog").dialog({
         autoOpen: false,

@@ -150,6 +150,10 @@ body {
   margin-right: 18px;
 }
 
+.ml3 {
+  margin-left: 3px;
+}
+
 .w160 {
   width: 160px;
 }
@@ -182,5 +186,16 @@ body {
 
 .searchWrapper {
   display: inline-block;
-  width: 65%;
+  width: 64%;
+}
+
+.roundIconBtn {
+  height: 25px;
+  padding: 0px;
+  width: 60px;
+}
+
+.searchInputText {
+  display: inline;
+  height: 30px;
 }

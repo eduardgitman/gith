@@ -1,4 +1,5 @@
 import {
+  hasData, 
   buildFileChangeAmount,
   buildAuthorsAmount,
   buildTreeView,
@@ -14,6 +15,11 @@ import { cleanAndCloseUiContext, showCommit } from "./uiupdate.js";
 import { buildSearch } from './search.js'
 
 function showFileTable(searchObj) {
+  if(!hasData()) {
+    alert('Please upload a file caontaining git log --numstat');
+    return false;
+  }
+
   let fileChange = buildFileChangeAmount(searchObj);
   let cols = [];
   for (let f of fileChange.fca) {
@@ -57,9 +63,14 @@ function showFileTable(searchObj) {
     
   buildSearch($('#searchFiles'), showFileTable, searchObj);
   $("#tableFiles").show();
+  return true;
 }
 
 function showAuthorsTable(searchObj) {
+  if(!hasData()) {
+    alert('Please upload a file caontaining git log --numstat');
+    return false;
+  }
   let authorChange = buildAuthorsAmount(searchObj);
   let cols = [];
   for (let a of authorChange.aca) {
@@ -106,9 +117,14 @@ function showAuthorsTable(searchObj) {
 
   buildSearch($('#searchAuthors'), showAuthorsTable, searchObj);
   $("#tableAuthors").show();
+  return true;
 }
 
 function showFolderTree(searchObj) {
+  if(!hasData()) {
+    alert('Please upload a file caontaining git log --numstat');
+    return false;
+  }
   //let treeData = buildTreeView(searchObj);
   cleanAndCloseUiContext([
     { type: "table", hook: "#tableFiles" },
@@ -158,9 +174,14 @@ function showFolderTree(searchObj) {
         .filterNodes($(this).val(), { autoExpand: true, leavesOnly: true });
     }
   });
+  return true;
 }
 
 function showCalendar(searchObj) {
+  if(!hasData()) {
+    alert('Please upload a file caontaining git log --numstat');
+    return false;
+  }
   let calendarDate = buildCalendarView(searchObj);
   
   cleanAndCloseUiContext([
@@ -202,6 +223,7 @@ function showCalendar(searchObj) {
   
   buildSearch($('#searchCalendar'), showCalendar, searchObj);
   $cal.show();
+  return true;
 }
 
 export { showFileTable, showAuthorsTable, showFolderTree, showCalendar };

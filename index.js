@@ -23,8 +23,6 @@ function initApplication() {
 
     $('.j-firstPageInfo').hide();
     $('.j-processPanel').show();
-
-    linkMenuEvents();
     $('.j-menuFiles').click();
   };
   fileReader.onerror = function () {
@@ -36,32 +34,32 @@ function linkMenuEvents() {
 
   
   $('.j-menuHome').click(function(event){    
-    showFileTable();
     setMenuActive($(this));
   })
 
   $('.j-menuFiles').click(function(event){    
-    showFileTable();
-    setMenuActive($(this));
+    if(showFileTable())
+      setMenuActive($(this));
   })
 
   $('.j-menuAuthors').click(function(){    
-    showAuthorsTable();
-    setMenuActive($(this));
+    if(showAuthorsTable())
+      setMenuActive($(this));
   })
 
   $('.j-menuFolders').click(function(event){    
-    showFolderTree();
-    setMenuActive($(this));
+    if(showFolderTree())
+      setMenuActive($(this));
   })  
 
   $('.j-menuCalendar').click(function(event){    
-    showCalendar();
-    setMenuActive($(this));
+    if(showCalendar())
+      setMenuActive($(this));
   })   
 
   $('.j-menuHelp').click(function(event){   
     setMenuActive($(this));
+    $('.j-processPanel').show();
   })  
 }
 
@@ -79,4 +77,4 @@ function setMenuActive(elm) {
   })
 }
 
-export { initApplication };
+export { initApplication, linkMenuEvents };

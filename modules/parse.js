@@ -446,10 +446,15 @@ function getCommit(hash) {
   }
 }
 
+function hasData() {
+  return g_arr != undefined;
+}
+
 export {
   parseText,
   fileLog,
   authorLog,
+  hasData,
   buildFileChangeAmount,
   buildAuthorsAmount,
   buildTreeView,

@@ -17,9 +17,10 @@ function buildSearch(root, callback) {
     callbackFn = callback;
     // build the wrapper and control buttons ( add search clear )
     let div = $('<div class=\'searchWrapper\'>');
-    let addCondition = $('<button type=\'button\' class=\'j-addRow w5em fr\'>').text('Add');
-    let search = $('<button type=\'button\' class=\'mr10\'>').text('Search');
-    let clear = $('<a href=\'#\' class=\'j-clearSearch\'>').text('Clear');
+    let addCondition = $('<button type=\'button\' class=\'j-addRow btn btn-primary fr roundIconBtn mr10\' title=\'Add search condition\'>')
+            .html('<i class="bi bi-plus-lg"></i>');
+    let search = $('<button type=\'button\' class=\'mr10 btn btn-success roundIconBtn\' title=\'Search\'>').html('<i class="bi bi-search"></i>');
+    let clear = $('<a href=\'#\' class=\'j-clearSearch\' title=\'Remove all search conditions\'>').text('Clear');
 
     // add the first search row
     div.append(buildSearchRow(true));
@@ -54,13 +55,11 @@ function buildSearch(root, callback) {
         div.find('input[type=\'date\']').remove();
         // unfortunately we need to recreate the elements for text input, and link events
         if(div.find('.j-textInput').length == 0) {
-            let caseImg = $('<img src=\'img/caseInsen.png\' class=\'j-caseImg\' data-c=\'ci\' title=\'Case insensitive\'>'); 
+            let caseImg = getCaseImg();
             caseImg.click(function(e){
                 caseImgSwitch($(this))
             })
-            div.find('.divSearchInput')
-                  .append($('<input type=\'text\' class=\'j-textInput mb5 w160pc\'>'))
-                  .append(caseImg);
+            div.find('.divSearchInput').append(getTextInput()).append(caseImg);
         } else {
             div.find('.j-textInput').val('');
         }
@@ -75,12 +74,13 @@ function buildSearchRow(first) {
     let selField = $('<select class=\'j-fieldSelect w160 mr10\'>');
     let selComparator = $('<select class=\'j-cmpSelect w160 mr10\'>');
     let divInput = $('<div class=\'divSearchInput\'>')
-    let textInput = $('<input type=\'text\' class=\'j-textInput mb5 w160pc\'>');
-    let caseImg = $('<img src=\'img/caseInsen.png\' class=\'j-caseImg\' data-c=\'ci\' title=\'Case insensitive\'>')
+    let textInput = getTextInput();
+    let caseImg = getCaseImg()
     let dateInput = $('<input type=\'date\' class=\'j-dateOne mb5 mr18\'>');
     let date2Input = $('<input type=\'date\' class=\'j-dateTwo mb5\'>');
     
-    let removeCondition = $('<button type=\'button\' class=\'j-removeRow w5em\'>').text('Remove');
+    let removeCondition = getRemoveBtn();
+
     addFieldOptions(selField);
     addCmpOption(selComparator, 'text');
     
@@ -127,6 +127,19 @@ function buildSearchRow(first) {
     })
 
     return row;
+}
+
+function getTextInput() {
+    return $('<input type=\'text\' class=\'j-textInput mb5 form-control searchInputText w160pc\'>');
+}
+
+function getRemoveBtn() {
+    return $('<button type=\'button\' class=\'j-removeRow btn btn-danger roundIconBtn\' title=\'Remove search condition\'>')
+    .html('<i class="bi bi-trash"></i> ');
+}
+
+function getCaseImg() {
+    return $('<img src=\'img/caseInsen.png\' class=\'j-caseImg ml3\' data-c=\'ci\' title=\'Case insensitive\'>');
 }
 
 // change the case sensitiveness Sensitive / Insensitive of a text Search
@@ -195,7 +208,7 @@ function manageRemoveActions (searchWrapper) {
     if(count > 1) {
        $sw.find('.j-rowSearch').each(function(i, r){
             if($(this).find('.j-removeRow').length == 0) {
-                let removeCondition = $('<button type=\'button\' class=\'j-removeRow w5em\'>').text('Remove');
+                let removeCondition = getRemoveBtn();
                 $(this).append(removeCondition);
                 removeCondition.click(function(e){
                     removeSearchAction($(this));                    
