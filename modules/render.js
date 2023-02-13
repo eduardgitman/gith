@@ -176,6 +176,10 @@ function showCalendar(searchObj) {
       .attr('style', 'background-color:' + value).text(key));
   }
   var $cal = $('#calendar');  
+  $cal.remove();
+  $('#authors').after($('<div id=\'calendar\'>'))
+  
+  var $cal = $('#calendar');
   $cal.zabuto_calendar({
     today_markup: '<span style="color: white" class="badge bg-primary">[day]</span>',
     classname: 'table table-bordered lightgrey-weekends',
@@ -195,9 +199,9 @@ function showCalendar(searchObj) {
     let hash = $(this).attr('data-hash');
     showCommit(hash);
   })  
+  
+  buildSearch($('#searchCalendar'), showCalendar, searchObj);
   $cal.show();
-  //buildSearch($('#searchCalendar'), showCalendar, searchObj);
- 
 }
 
 export { showFileTable, showAuthorsTable, showFolderTree, showCalendar };
