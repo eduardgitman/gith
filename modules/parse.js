@@ -280,6 +280,10 @@ function checkFiles(search, files) {
 }
 
 function checkField(search, field) {
+  if(search.case == 'ci' && field != undefined) {
+    field = field.toLowerCase();
+    search.value = search.value.toLowerCase();
+  }
   if('include' == search.cmp) {
     if(!textContains(field, search.value)){
       return false;

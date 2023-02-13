@@ -47,7 +47,13 @@ function buildSearch(root, callback) {
         div.find('.j-cmpSelect').val('include');
         div.find('input[type=\'date\']').remove();
         if(div.find('.j-textInput').length == 0) {
-            div.find('.divSearchInput').append($('<input type=\'text\' class=\'j-textInput mb5 w160pc\'>'));
+            let caseImg = $('<img src=\'img/caseInsen.png\' class=\'j-caseImg\' data-c=\'ci\' title=\'Case insensitive\'>'); 
+            caseImg.click(function(e){
+                caseImgSwitch($(this))
+            })
+            div.find('.divSearchInput')
+                  .append($('<input type=\'text\' class=\'j-textInput mb5 w160pc\'>'))
+                  .append(caseImg);
         } else {
             div.find('.j-textInput').val('');
         }
@@ -61,6 +67,7 @@ function buildSearchRow(first) {
     let selComparator = $('<select class=\'j-cmpSelect w160 mr10\'>');
     let divInput = $('<div class=\'divSearchInput\'>')
     let textInput = $('<input type=\'text\' class=\'j-textInput mb5 w160pc\'>');
+    let caseImg = $('<img src=\'img/caseInsen.png\' class=\'j-caseImg\' data-c=\'ci\' title=\'Case insensitive\'>')
     let dateInput = $('<input type=\'date\' class=\'j-dateOne mb5 mr18\'>');
     let date2Input = $('<input type=\'date\' class=\'j-dateTwo mb5\'>');
     
@@ -68,7 +75,7 @@ function buildSearchRow(first) {
     addFieldOptions(selField);
     addCmpOption(selComparator, 'text');
     
-    row.append(selField).append(selComparator).append( divInput.append(textInput) );
+    row.append(selField).append(selComparator).append( divInput.append(textInput).append(caseImg) );
     if(!first) {
         row.append(removeCondition);
     }
@@ -78,11 +85,16 @@ function buildSearchRow(first) {
             addCmpOption(selComparator, 'date');
             $(this).parent().find('.j-textInput').after(dateInput);
             $(this).parent().find('.j-textInput').remove();
+            $(this).parent().find('.j-caseImg').remove();
         } else {
             if(selComparator.find(":selected").val().indexOf('date')>=0) {
                 addCmpOption(selComparator, 'text');
-                $(this).parent().find('.j-dateOne').after(textInput);
+                $(this).parent().find('.divSearchInput').append(textInput).append(caseImg);
                 $(this).parent().find('.j-dateOne').remove();
+                $(this).parent().find('.j-dateTwo').remove();
+                caseImg.click(function(e){
+                    caseImgSwitch($(caseImg))
+                })
             }
         }
     });
@@ -95,6 +107,10 @@ function buildSearchRow(first) {
         }
     });
 
+    caseImg.click(function(e){
+        caseImgSwitch($(this))
+    })
+
     removeCondition.click(function(e){
         $(this).parent().remove();
         if($('.searchWrapper').find('j-rowSearch').length < 4 ) {
@@ -103,6 +119,18 @@ function buildSearchRow(first) {
     })
 
     return row;
+}
+
+function caseImgSwitch($img) {
+    if($img.attr('data-c') == 'ci') {
+        $img.attr('data-c', 'cs');
+        $img.attr('src', 'img/caseSen.png');
+        $img.attr('title', 'Case sensitive');
+    } else {
+        $img.attr('data-c', 'ci');
+        $img.attr('src', 'img/caseInsen.png');
+        $img.attr('title', 'Case insensitive');
+    }
 }
 
 function addCmpOption(select, type) {
@@ -162,6 +190,7 @@ function getSearchObj() {
         let $row = $(rowTxt);
         let f = $row.find('.j-fieldSelect option:selected').val();
         let c = $row.find('.j-cmpSelect option:selected').val();
+        let cs = $row.find('.j-caseImg').attr('data-c');
         let v;
         let d2;
         if(f == 'date') {
@@ -175,6 +204,7 @@ function getSearchObj() {
         s.push({
             field: f,
             cmp: c,
+            case: cs,
             value: v,
             d2: d2
         })
