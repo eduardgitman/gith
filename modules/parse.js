@@ -40,12 +40,15 @@ function parseText(text) {
   g_arr = parseCommits(g_commits);
 }
 
-function buildTreeView() {
+function buildTreeView(searchObj) {
   let cArr = g_arr;
   // c is an object with: hash, author, authorEmail, date, title, files
   // files is an array with: changeA, changeR, change, name
   let paths = [];
   for (let c of cArr) {
+    if( searchObj != undefined && !isValidCommitBySearch(c, searchObj)) {
+      continue;
+    }
     for (let f of c.files) {
       if (paths.indexOf(f.name) == -1) {
         paths.push(f.name);
@@ -105,14 +108,14 @@ function computeTreeNodePath(node) {
   }
 }
 
-function buildAuthorsAmount(text) {
+function buildAuthorsAmount(searchObj) {
   let cArr = g_arr;
   const aMap = new Map();
   const aCC = new Map();
   // c is an object with: hash, author, authorEmail, date, title, files
   // files is an array with: changeA, changeR, change, name
   for (let c of cArr) {
-    if( text != undefined && c.title.indexOf(text) < 0) {
+    if( searchObj != undefined && !isValidCommitBySearch(c, searchObj)) {
       continue;
     }
     // count commits per author
@@ -138,7 +141,7 @@ function buildAuthorsAmount(text) {
   return { aca: aMap, acc: aCC };
 }
 
-function buildCalendarView() {
+function buildCalendarView(searchObj) {
   const map = new Map();
   const authorMap = new Map();
 
@@ -146,6 +149,9 @@ function buildCalendarView() {
   // files is an array with: changeA, changeR, change, name
   let colorIndex = 0;
   for (let c of g_arr) {
+    if( searchObj != undefined && !isValidCommitBySearch(c, searchObj)) {
+      continue;
+    }
     let dateTime = new Date(c.date);
     let m = dateTime.getMonth() + 1;
     let mm = m < 10 ? "0" + m : m;
@@ -190,12 +196,12 @@ function buildCalendarView() {
   return {events: events, authors: authorMap };
 }
 
-function buildFileChangeAmount(text) {
+function buildFileChangeAmount(searchObj) {
   let cArr = g_arr;
   const fileMap = new Map();
   const fileCC = new Map();
   for (let c of cArr) {
-    if( text != undefined && c.title.indexOf(text) < 0) {
+    if( searchObj != undefined && !isValidCommitBySearch(c, searchObj)) {
         continue;
     }
     for (let f of c.files) {
@@ -223,6 +229,75 @@ function buildFileChangeAmount(text) {
   // Set up a sorting function that sort in ascending value order
   var sortFunction = (a, b) => b[1] - a[1];
   return { fca: array.sort(sortFunction), fcc: fileCC };
+}
+
+function isValidCommitBySearch(c, searchObj) {
+
+  // s    : field, cmp, value, d2
+  // field: title, author, file, date
+  // cmp  : include, exclude, dateAfter, dateBefore, dateBetween
+  for(let s of searchObj) {
+    let isOk = true;
+    switch (s.field) {
+      case 'title':
+        isOk = checkField(s, c.title);
+        break;
+      case 'author':
+        isOk = checkField(s, c.author);
+        break;
+      case 'file':
+         isOk = checkFiles(s, c.files);
+         break;
+      case 'date':
+        isOk = checkDate(s, c.date);
+    }
+    console.log(isOk)
+    if(!isOk)
+      return false;
+  }  
+  return true;
+}
+
+function checkDate(search, date) {
+  if('dateAfter' == search.cmp) {
+    return new Date(search.value).getTime() < date;
+  }
+  if('dateBefore' == search.cmp) {
+    return new Date(search.value).getTime() > date;
+  }
+  if('dateBetween' == search.cmp) {
+    return new Date(search.value).getTime() < date && new Date(search.d2).getTime() > date;
+  }
+}
+
+function checkFiles(search, files) {
+    let result = false;
+    for(let f of files) {
+      let isOk = checkField(search, f.name);
+      result = result || isOk;
+    }
+    return result;
+}
+
+function checkField(search, field) {
+  if('include' == search.cmp) {
+    if(!textContains(field, search.value)){
+      return false;
+    }
+  }
+  if('exclude' == search.cmp) {
+    if(textContains(field, search.value)){
+      return false;
+    }
+  }
+  return true;
+}
+
+function textContains(text, str) {
+  if(text == undefined) {
+    return false;
+  }
+  return text.indexOf(str) > -1;
 }
 
 function authorLog(author) {

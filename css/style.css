@@ -113,10 +113,6 @@ body {
   background-color: #f5f5f5;
 }
 
-.cDayEvents {
-
-}
-
 .event {
   color: green;
 }
@@ -136,4 +132,40 @@ body {
   margin-right:10px; 
   padding:3px; 
   font-family: inconsolataBold;
+}
+
+.divSearchInput {
+  display: inline-block;
+  width: 290px;
+  margin-right: 10px;
+}
+
+
+
+.mr10 {
+  margin-right: 10px;
+}
+
+.mr18 {
+  margin-right: 18px;
+}
+
+.w160 {
+  width: 160px;
+}
+
+.w160pc {
+  width: 100%;
+}
+
+.w5em {
+  width: 5em;
+}
+
+.mt10 {
+  margin-top: 10px;
+}
+
+.mb5 {
+  margin-bottom: 5px;
 }

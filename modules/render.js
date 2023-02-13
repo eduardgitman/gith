@@ -11,8 +11,10 @@ import {
 
 import { cleanAndCloseUiContext, showCommit } from "./uiupdate.js";
 
-function showFileTable(text) {
-  let fileChange = buildFileChangeAmount(text);
+import { buildSearch } from './search.js'
+
+function showFileTable(searchObj) {
+  let fileChange = buildFileChangeAmount(searchObj);
   let cols = [];
   for (let f of fileChange.fca) {
     cols.push({ name: f[0], change: f[1], cmts: fileChange.fcc.get(f[0]) });
@@ -27,6 +29,7 @@ function showFileTable(text) {
 
   $("#tableFiles").DataTable({
     bAutoWidth: false,
+    searching: false,
     order: [[0, "desc"]],
     pageLength: 10,
     data: cols,
@@ -51,17 +54,13 @@ function showFileTable(text) {
       });
     },
   });
-  $("#fileSearchInput").keyup(function(e){
-    if (e.key === "Enter" || e.keyCode === 13) {
-      showFileTable($(this).val());
-    }
-  })
     
+  buildSearch($('#searchFiles'), showFileTable, searchObj);
   $("#tableFiles").show();
 }
 
-function showAuthorsTable(text) {
-  let authorChange = buildAuthorsAmount(text);
+function showAuthorsTable(searchObj) {
+  let authorChange = buildAuthorsAmount(searchObj);
   let cols = [];
   for (let a of authorChange.aca) {
     cols.push({ name: a[0], change: a[1], cmts: authorChange.acc.get(a[0]) });
@@ -77,6 +76,7 @@ function showAuthorsTable(text) {
   $("#tableAuthors").DataTable({
     bAutoWidth: false,
     order: [[0, "desc"]],
+    searching: false,
     pageLength: 10,
     data: cols,
     columns: [
@@ -104,15 +104,12 @@ function showAuthorsTable(text) {
     },
   });
 
-  $("#authorSearchInput").keyup(function(e){
-    if (e.key === "Enter" || e.keyCode === 13) {
-      showAuthorsTable($(this).val());
-    }
-  })
+  buildSearch($('#searchAuthors'), showAuthorsTable, searchObj);
   $("#tableAuthors").show();
 }
 
-function showFolderTree() {
+function showFolderTree(searchObj) {
+  //let treeData = buildTreeView(searchObj);
   cleanAndCloseUiContext([
     { type: "table", hook: "#tableFiles" },
     { type: "table", hook: "#tableAuthors" },
@@ -152,7 +149,7 @@ function showFolderTree() {
     },
   });
 
-  $("#tree").show();
+  $("#tree").show();  
 
   $("#treeSearchInput").keyup(function (e) {
     if (e.key === "Enter" || e.keyCode === 13) {
@@ -163,7 +160,9 @@ function showFolderTree() {
   });
 }
 
-function showCalendar() {
+function showCalendar(searchObj) {
+  let calendarDate = buildCalendarView(searchObj);
+  
   cleanAndCloseUiContext([
     { type: "table", hook: "#tableFiles" },
     { type: "table", hook: "#tableAuthors" },
@@ -171,7 +170,7 @@ function showCalendar() {
     { type: "calendar", hook: "#calendar" },
   ]);
 
-  let calendarDate = buildCalendarView();
+  $('#authors').empty();
   for(const [key, value] of calendarDate.authors) {
     $('#authors').append($('<span>').addClass('authorLabel')
       .attr('style', 'background-color:' + value).text(key));
@@ -196,8 +195,9 @@ function showCalendar() {
     let hash = $(this).attr('data-hash');
     showCommit(hash);
   })  
-
   $cal.show();
+  //buildSearch($('#searchCalendar'), showCalendar, searchObj);
+ 
 }
 
 export { showFileTable, showAuthorsTable, showFolderTree, showCalendar };

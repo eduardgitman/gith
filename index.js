@@ -5,7 +5,7 @@ const menuToPanel = [
   {menu: '.j-menuFiles', panel: '.j-filesPanel'},
   {menu: '.j-menuAuthors', panel: '.j-authorsPanel'},
   {menu: '.j-menuFolders', panel: '.j-treePanel'},
-  {menu: '.j-menuCalendar', panel: '.jj-calendarPanel'},  
+  {menu: '.j-menuCalendar', panel: '.j-calendarPanel'},  
   {menu: '.j-menuHelp', panel: '.j-helpPanel'},
   {menu: '.j-menuHome', panel: '.j-firstPageInfo'}
 ]
