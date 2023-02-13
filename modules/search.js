@@ -13,15 +13,12 @@ function buildSearch(root, callback) {
     })
     callbackFn = callback;
     let div = $('<div class=\'searchWrapper\'>');
-    let addCondition = $('<button type=\'button\' class=\'j-addRow w5em\'>').text('Add');
+    let addCondition = $('<button type=\'button\' class=\'j-addRow w5em fr\'>').text('Add');
     let search = $('<button type=\'button\' class=\'mr10\'>').text('Search');
     let clear = $('<a href=\'#\' class=\'j-clearSearch\'>').text('Clear');
     div.append(buildSearchRow(true));
 
-    div.find('.divSearchInput').first().after(addCondition);
-
-    // div.append($('<div>').append(addCondition));
-    div.append($('<div>').append(search).append(clear));
+    div.append($('<div class=\'searchActionDiv\'>').append(search).append(clear).append(addCondition));
     root.append(div);
 
     addCondition.click(function(e){
@@ -29,6 +26,7 @@ function buildSearch(root, callback) {
         if(div.find('.j-rowSearch').length > 3 ) {
             $(this).hide();
         }
+        manageRemoveActions(div);
     });
 
     search.click(function(e){
@@ -112,10 +110,7 @@ function buildSearchRow(first) {
     })
 
     removeCondition.click(function(e){
-        $(this).parent().remove();
-        if($('.searchWrapper').find('j-rowSearch').length < 4 ) {
-            $('.j-addRow').show();
-        }
+        removeSearchAction($(this));
     })
 
     return row;
@@ -130,6 +125,16 @@ function caseImgSwitch($img) {
         $img.attr('data-c', 'ci');
         $img.attr('src', 'img/caseInsen.png');
         $img.attr('title', 'Case insensitive');
+    }
+}
+
+function removeSearchAction(elm) {
+    elm.parent().remove();
+    if($('.searchWrapper').find('.j-rowSearch').length < 4 ) {
+        $('.j-addRow').show();
+    }
+    if($('.searchWrapper').find('.j-rowSearch').length == 1 ) {
+        $('.searchWrapper').find('.j-removeRow').remove();
     }
 }
 
@@ -163,6 +168,22 @@ function addCmpOption(select, type) {
             text: 'Between'
         })); 
     }    
+}
+
+function manageRemoveActions (searchWrapper) {
+    let $sw = $(searchWrapper);
+    let count = $sw.find('.j-rowSearch').length;
+    if(count > 1) {
+       $sw.find('.j-rowSearch').each(function(i, r){
+            if($(this).find('.j-removeRow').length == 0) {
+                let removeCondition = $('<button type=\'button\' class=\'j-removeRow w5em\'>').text('Remove');
+                $(this).append(removeCondition);
+                removeCondition.click(function(e){
+                    removeSearchAction($(this));                    
+                })
+            }
+       })
+    }
 }
 
 function addFieldOptions(selField) {

@@ -169,3 +169,18 @@ body {
 .mb5 {
   margin-bottom: 5px;
 }
+
+.searchActionDiv {
+  border-top: 1px solid gray;
+  padding-top: 4px;
+  margin-top: 10px;
+}
+
+.fr {
+  float: right;
+}
+
+.searchWrapper {
+  display: inline-block;
+  width: 65%;
+}
