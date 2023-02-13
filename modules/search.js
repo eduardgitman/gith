@@ -51,6 +51,7 @@ function buildSearch(root, callback) {
         } else {
             div.find('.j-textInput').val('');
         }
+        callbackFn();
     })
 }
 
