@@ -5,6 +5,7 @@ import {
 
 var g_commits;
 var g_arr;
+var g_authors = [];
 
 // authors colors
 const colors = [
@@ -244,7 +245,7 @@ function isValidCommitBySearch(c, searchObj) {
         isOk = checkField(s, c.title);
         break;
       case 'author':
-        isOk = checkField(s, c.author);
+        isOk = checkAuthors(s, c.author);
         break;
       case 'file':
          isOk = checkFiles(s, c.files);
@@ -269,6 +270,19 @@ function checkDate(search, date) {
   if('dateBetween' == search.cmp) {
     return new Date(search.value).getTime() < date && new Date(search.d2).getTime() > date;
   }
+}
+
+function checkAuthors(search, author) {
+  let isOk = false;
+  for(let a of search.value) {
+    isOk = isOk || 
+          checkField({
+            case: search.case,
+            cmp: search.cmp,
+            value: a
+          }, author);
+  }
+  return isOk;
 }
 
 function checkFiles(search, files) {
@@ -381,11 +395,18 @@ function parseCommits(commits, date) {
     if (date != undefined && cDate < date.getTime()) {
       continue;
     }
+    // collect authors
+    let author = lines[1].substring(8).split(" <")[0];
+    let authorEmail = lines[1].substring(8).split(" <")[1].slice(0, -1);
+
+    if(g_authors.indexOf(author) < 0) {
+      g_authors.push(author);
+    }
 
     cList.push({
       hash: lines[0].substring(7),
-      author: lines[1].substring(8).split(" <")[0],
-      authorEmail: lines[1].substring(8).split(" <")[1].slice(0, -1),
+      author: author,
+      authorEmail: authorEmail,
       date: cDate,
       title: title,
       files: extractFileChanges(lines, title),
@@ -450,6 +471,10 @@ function hasData() {
   return g_arr != undefined;
 }
 
+function getAuthors() {
+  return g_authors;
+}
+
 export {
   parseText,
   fileLog,
@@ -462,4 +487,5 @@ export {
   countCommitsForPath,
   computeTreeNodePath,
   getCommit,
+  getAuthors
 };

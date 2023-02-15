@@ -1,3 +1,4 @@
+import { getAuthors } from './parse.js';
 
 var callbackFn;
 
@@ -53,7 +54,9 @@ function buildSearch(root, callback) {
         addCmpOption(div.find('.j-cmpSelect'), 'text');
         div.find('.j-cmpSelect').val('include');
         div.find('input[type=\'date\']').remove();
+        div.find('.typeahead__container').remove();
         // unfortunately we need to recreate the elements for text input, and link events
+        
         if(div.find('.j-textInput').length == 0) {
             let caseImg = getCaseImg();
             caseImg.click(function(e){
@@ -91,21 +94,43 @@ function buildSearchRow(first) {
 
     // add listeners to manage the type of inputs to show, switch between text and date 
     selField.change(function(e){
+        $(this).parent().find('.divSearchInput').find('.typeahead__container').remove();
         if($(this).val() == 'date') {
             addCmpOption(selComparator, 'date');
             $(this).parent().find('.j-textInput').after(dateInput);
             $(this).parent().find('.j-textInput').remove();
             $(this).parent().find('.j-caseImg').remove();
         } else {
-            if(selComparator.find(":selected").val().indexOf('date')>=0) {
-                addCmpOption(selComparator, 'text');
-                $(this).parent().find('.divSearchInput').append(textInput).append(caseImg);
-                $(this).parent().find('.j-dateOne').remove();
-                $(this).parent().find('.j-dateTwo').remove();
+            $(this).parent().find('.divSearchInput').find('.j-textInput').remove();   
+            $(this).parent().find('.j-dateOne').remove();
+            $(this).parent().find('.j-dateTwo').remove();
+            $(this).parent().find('.j-caseImg').remove();            
+
+            addCmpOption(selComparator, 'text');
+
+            let newTextInput = getTextInput();
+                       
+            // if we select authors, add autocomplete
+            if($(this).val().indexOf('author') >= 0) {  
+                newTextInput = getTypeAhead();  
+                let authors = getAuthors();
+                newTextInput.find('.js-typeahead-input').typeahead({
+                    order: "asc",
+                    multiselect: {
+                        limit: 3 
+                    },
+                    source: {
+                        data: authors
+                    }
+                });     
+                $(this).parent().find('.divSearchInput').append(newTextInput);          
+            } else {
+                $(this).parent().find('.divSearchInput').append(newTextInput);    
+                $(this).parent().find('.divSearchInput').append(caseImg);
                 caseImg.click(function(e){
                     caseImgSwitch($(caseImg))
                 })
-            }
+            }          
         }
     });
 
@@ -140,6 +165,14 @@ function getRemoveBtn() {
 
 function getCaseImg() {
     return $('<img src=\'img/caseInsen.png\' class=\'j-caseImg ml3\' data-c=\'ci\' title=\'Case insensitive\'>');
+}
+
+function getTypeAhead() {
+   return $('<div class=\'typeahead__container w160pc dispInBlock\' >')
+                .append($('<div class=\'typeahead__field\' >')
+                    .append($('<span class=\'typeahead__query\' style=\'height: 25px\'>')
+                                .append('<input class=\'js-typeahead-input\' name=\'q\' type=\'search\' autofocus autocomplete=\'off\' >') ) );
+
 }
 
 // change the case sensitiveness Sensitive / Insensitive of a text Search
@@ -252,7 +285,15 @@ function getSearchObj() {
                 d2 = $row.find('.j-dateTwo').val();
             }
         } else {
-            v = $row.find('.j-textInput').val();
+            if(f == 'author') {
+                v = [];
+                $('.typeahead__label-container').find('.typeahead__label')
+                .each(function(i, e){ 
+                    v.push($(e).text().slice(0, -1));
+                })
+            } else {
+                v = $row.find('.j-textInput').val();
+            }
         }
         s.push({
             field: f,
