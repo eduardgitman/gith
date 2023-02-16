@@ -6,6 +6,8 @@ import {
 var g_commits;
 var g_arr;
 var g_authors = [];
+var g_date_min;
+var g_date_max;
 
 // authors colors
 const colors = [
@@ -354,31 +356,7 @@ function fileLog(fileName) {
   renderCommitsInDialog(cl, fileName);
 }
 
-function showDatepicker(cArr) {
-  // set the oldest date
-  let oldestDate = getOldestDateFromCommits(cArr);
-  $("#firstEdit").datepicker({
-    changeMonth: true,
-    changeYear: true,
-    minDate: oldestDate,
-    maxDate: new Date(),
-    dateFormat: "d M, y",
-    onSelect: function (dateText) {
-      showFileTable(parseCommits(g_commits, new Date(dateText)));
-    },
-  });
-  $("#firstEdit").datepicker("setDate", oldestDate);
-}
-
-function getOldestDateFromCommits(commits) {
-  let lc = commits.sort(function (a, b) {
-    return a.date - b.date;
-  });
-
-  return new Date(lc[0].date);
-}
-
-function parseCommits(commits, date) {
+function parseCommits(commits) {
   console.log("Parse individual commits");
 
   let cList = [];
@@ -390,18 +368,14 @@ function parseCommits(commits, date) {
     }
 
     let cDate = Date.parse(lines[2].substring(8));
-
-    // filter by date
-    if (date != undefined && cDate < date.getTime()) {
-      continue;
-    }
-    // collect authors
     let author = lines[1].substring(8).split(" <")[0];
     let authorEmail = lines[1].substring(8).split(" <")[1].slice(0, -1);
 
     if(g_authors.indexOf(author) < 0) {
       g_authors.push(author);
     }
+    computeMinMaxDates(cDate);
+
 
     cList.push({
       hash: lines[0].substring(7),
@@ -414,6 +388,28 @@ function parseCommits(commits, date) {
   }
 
   return cList;
+}
+
+function computeMinMaxDates(date) {
+  // initialisation phase
+  if(g_date_min == undefined) {
+    g_date_min = date;
+  }
+  if(g_date_max == undefined) {
+    g_date_max = date;
+  }
+  if(g_date_max == g_date_min && g_date_max == date) {
+    return;
+  }
+
+  // diferentiation phase
+  if(date < g_date_min) {
+    g_date_min = date;
+  }
+
+  if(date > g_date_max) {
+    g_date_max = date;
+  }
 }
 
 function extractFileChanges(lines, title) {
@@ -475,6 +471,14 @@ function getAuthors() {
   return g_authors;
 }
 
+function getMinDate() {
+  return g_date_min;
+}
+
+function getMaxDate() {
+  return g_date_max;
+}
+
 export {
   parseText,
   fileLog,
@@ -487,5 +491,7 @@ export {
   countCommitsForPath,
   computeTreeNodePath,
   getCommit,
-  getAuthors
+  getAuthors,
+  getMinDate,
+  getMaxDate
 };

@@ -1,4 +1,4 @@
-import { getAuthors } from './parse.js';
+import { getAuthors, getMinDate, getMaxDate } from './parse.js';
 
 var callbackFn;
 
@@ -53,7 +53,8 @@ function buildSearch(root, callback) {
         div.find('.j-fieldSelect').val('title');
         addCmpOption(div.find('.j-cmpSelect'), 'text');
         div.find('.j-cmpSelect').val('include');
-        div.find('input[type=\'date\']').remove();
+        div.find('.j-dateOne').remove();
+        div.find('.j-dateTwo').remove();
         div.find('.typeahead__container').remove();
         // unfortunately we need to recreate the elements for text input, and link events
         
@@ -79,7 +80,6 @@ function buildSearchRow(first) {
     let divInput = $('<div class=\'divSearchInput\'>')
     let textInput = getTextInput();
     let caseImg = getCaseImg()
-    let date2Input = $('<input type=\'text\' class=\'j-dateTwo mb5 w45pc\'>');
     
     let removeCondition = getRemoveBtn();
 
@@ -102,7 +102,7 @@ function buildSearchRow(first) {
         if($(this).val() == 'date') {
             addCmpOption(selComparator, 'date');
             let di = getDateInput();
-            di.datepicker({"dateFormat": 'd M, y'});
+            setupDatePicker(di);
             $(this).parent().find('.divSearchInput').append(di);            
         } else {
             addCmpOption(selComparator, 'text');
@@ -126,7 +126,8 @@ function buildSearchRow(first) {
     // show/hide end date field 
     selComparator.change(function(e){
         if($(this).val() == 'dateBetween') {
-            date2Input.datepicker({"dateFormat": 'd M, y'});
+            let date2Input = getDateInputInterval();
+            setupDatePicker(date2Input);
             $(this).parent().find('.j-dateOne').after(date2Input);
         } else {
             $(this).parent().find('.j-dateTwo').remove();
@@ -144,6 +145,30 @@ function buildSearchRow(first) {
     return row;
 }
 
+function setupDatePicker($elm) {
+    let dateFormat = 'd M, y';
+    $elm.datepicker({
+        "dateFormat": dateFormat, 
+        minDate: new Date(getMinDate()),
+        maxDate: new Date(getMaxDate())
+    })
+    // .on( "change", function() {
+    //     if($(this).hasClass('j-dateOne')) {
+    //        let date2 = $(this).parent().find('.j-dateTwo');
+    //        if(date2.length > 0 ) {
+    //             $($(this).parent().find('.j-dateTwo').first())                
+    //                 .datepicker({
+    //                     minDate: $.datepicker.parseDate( dateFormat, this.value )
+    //                 })
+    //        }
+    //     }
+    //     if($(this).hasClass('j-dateTwo')) {
+    //         let date1 = $(this).parent().find('.j-dateOne');
+    //         date1.datepicker({maxDate: $.datepicker.parseDate( dateFormat, this.value )})
+    //     }
+    // });
+}
+
 function setUpTypeAhead($elm, authors) {
     $elm.typeahead({
         order: "asc",
@@ -157,8 +182,11 @@ function setUpTypeAhead($elm, authors) {
 }
 
 function getDateInput() {
-    //https://jqueryui.com/datepicker/#date-range
     return $('<input type=\'text\' class=\'j-dateOne mb5 mr18 w45pc\'>');
+}
+
+function getDateInputInterval() {
+    return $('<input type=\'text\' class=\'j-dateTwo mb5 w45pc\'>');
 }
 
 function getTextInput() {
