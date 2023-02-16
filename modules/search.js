@@ -73,14 +73,13 @@ function buildSearch(root, callback) {
 
 // builds all the UI elements for a search row
 function buildSearchRow(first) {
-    let row = $('<div class=\'j-rowSearch\'>')
+    let row = $('<div class=\'j-rowSearch mt10\'>')
     let selField = $('<select class=\'j-fieldSelect w160 mr10\'>');
     let selComparator = $('<select class=\'j-cmpSelect w160 mr10\'>');
     let divInput = $('<div class=\'divSearchInput\'>')
     let textInput = getTextInput();
     let caseImg = getCaseImg()
-    let dateInput = $('<input type=\'date\' class=\'j-dateOne mb5 mr18\'>');
-    let date2Input = $('<input type=\'date\' class=\'j-dateTwo mb5\'>');
+    let date2Input = $('<input type=\'text\' class=\'j-dateTwo mb5 w45pc\'>');
     
     let removeCondition = getRemoveBtn();
 
@@ -95,34 +94,24 @@ function buildSearchRow(first) {
     // add listeners to manage the type of inputs to show, switch between text and date 
     selField.change(function(e){
         $(this).parent().find('.divSearchInput').find('.typeahead__container').remove();
+        $(this).parent().find('.j-dateOne').remove();
+        $(this).parent().find('.j-dateTwo').remove();    
+        $(this).parent().find('.j-textInput').remove();
+        $(this).parent().find('.j-caseImg').remove();
+
         if($(this).val() == 'date') {
             addCmpOption(selComparator, 'date');
-            $(this).parent().find('.j-textInput').after(dateInput);
-            $(this).parent().find('.j-textInput').remove();
-            $(this).parent().find('.j-caseImg').remove();
+            let di = getDateInput();
+            di.datepicker({"dateFormat": 'd M, y'});
+            $(this).parent().find('.divSearchInput').append(di);            
         } else {
-            $(this).parent().find('.divSearchInput').find('.j-textInput').remove();   
-            $(this).parent().find('.j-dateOne').remove();
-            $(this).parent().find('.j-dateTwo').remove();
-            $(this).parent().find('.j-caseImg').remove();            
-
             addCmpOption(selComparator, 'text');
-
             let newTextInput = getTextInput();
                        
             // if we select authors, add autocomplete
             if($(this).val().indexOf('author') >= 0) {  
                 newTextInput = getTypeAhead();  
-                let authors = getAuthors();
-                newTextInput.find('.js-typeahead-input').typeahead({
-                    order: "asc",
-                    multiselect: {
-                        limit: 3 
-                    },
-                    source: {
-                        data: authors
-                    }
-                });     
+                setUpTypeAhead(newTextInput.find('.js-typeahead-input'), getAuthors());  
                 $(this).parent().find('.divSearchInput').append(newTextInput);          
             } else {
                 $(this).parent().find('.divSearchInput').append(newTextInput);    
@@ -137,6 +126,7 @@ function buildSearchRow(first) {
     // show/hide end date field 
     selComparator.change(function(e){
         if($(this).val() == 'dateBetween') {
+            date2Input.datepicker({"dateFormat": 'd M, y'});
             $(this).parent().find('.j-dateOne').after(date2Input);
         } else {
             $(this).parent().find('.j-dateTwo').remove();
@@ -152,6 +142,23 @@ function buildSearchRow(first) {
     })
 
     return row;
+}
+
+function setUpTypeAhead($elm, authors) {
+    $elm.typeahead({
+        order: "asc",
+        multiselect: {
+            limit: 3 
+        },
+        source: {
+            data: authors
+        }
+    });   
+}
+
+function getDateInput() {
+    //https://jqueryui.com/datepicker/#date-range
+    return $('<input type=\'text\' class=\'j-dateOne mb5 mr18 w45pc\'>');
 }
 
 function getTextInput() {

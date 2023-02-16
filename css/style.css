@@ -136,7 +136,7 @@ body {
 
 .divSearchInput {
   display: inline-block;
-  width: 290px;
+  width: 63%;
   margin-right: 10px;
 }
 
@@ -159,7 +159,7 @@ body {
 }
 
 .w160pc {
-  width: 88%;
+  width: 96%;
 }
 
 .w5em {
@@ -185,8 +185,8 @@ body {
 }
 
 .searchWrapper {
-  display: inline-block;
-  width: 64%;
+  /* display: inline-block; */
+  /* width: 64%; */
 }
 
 .roundIconBtn {
@@ -212,6 +212,10 @@ body {
 
 body {
   font: 16px Arial;  
+}
+
+.w45pc {
+  width: 45%;
 }
 
 /*the container must be positioned relative:*/
